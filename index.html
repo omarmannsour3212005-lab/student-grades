@@ -4,52 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OM Grade System</title>
-  <link rel="stylesheet" href="style.css?v=100">
+  <link rel="stylesheet" href="style.css?v=200">
 </head>
 
 <body>
 
-  <div class="login-page">
-    <div class="login-box">
-      <h2>OM Grade System</h2>
-
-      <!-- 3 BUTTONS -->
-      <div class="login-actions">
-        <button onclick="showStudentLogin()">Student</button>
-        <button onclick="showTeacherLogin()">Teacher Login</button>
-        <button onclick="showSignUp()">Sign Up</button>
-      </div>
-
-      <!-- STUDENT -->
-      <div id="studentBox" class="login-section">
-        <input id="studentName" type="text" placeholder="Enter your name">
-        <button onclick="studentEnter()">Show My Grades</button>
-        <p class="hint">Student does not need password</p>
-      </div>
-
-      <!-- TEACHER -->
-      <div id="teacherBox" class="login-section" style="display:none;">
-        <input id="teacherPassword" type="password" placeholder="Password">
-        <button onclick="teacherEnter()">Login</button>
-      </div>
-
-      <!-- SIGN UP -->
-      <div id="signupBox" class="login-section" style="display:none;">
-        <input id="newUser" type="text" placeholder="Username">
-        <input id="newPass" type="password" placeholder="Password">
-        <button onclick="signUp()">Create Account</button>
-      </div>
-
-      <div id="result"></div>
-
+<nav class="navbar">
+  <div class="brand-logo">
+    <div class="logo-icon">OM</div>
+    <div>
+      <span class="logo-text"><b class="om">OM</b> Grade System</span>
+      <span class="logo-sub">Student Calculator</span>
     </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <button class="dark-btn" onclick="toggleDarkMode()">🌙</button>
+</nav>
 
-  <script src="script.js?v=100"></script>
-
-</body>
-</html></html>
+<div id="loginPage"
