@@ -1,91 +1,69 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
+  authDomain: "om-grade-system.firebaseapp.com",
+  databaseURL: "https://om-grade-system-default-rtdb.firebaseio.com",
+  projectId: "om-grade-system",
+  storageBucket: "om-grade-system.firebasestorage.app",
+  messagingSenderId: "1030779408678",
+  appId: "1:1030779408678:web:40f10973f03902327971e7"
+};
+
+const appFirebase = initializeApp(firebaseConfig);
+const db = getDatabase(appFirebase);
+
 let lastStudentData = null;
 let chart = null;
 let currentTeacher = localStorage.getItem("currentTeacher") || null;
 
 const subjectTranslations = {
   en: {
-    math: "Math",
-    english: "English",
-    arabic: "Arabic",
-    hebrew: "Hebrew",
-    physics: "Physics",
-    chemistry: "Chemistry",
-    biology: "Biology",
-    history: "History",
-    geography: "Geography",
-    computer: "Computer",
-    sport: "Sport",
-    art: "Art",
-    music: "Music",
-    science: "Science",
-    technology: "Technology",
-    programming: "Programming",
-    economics: "Economics",
-    psychology: "Psychology"
+    math: "Math", english: "English", arabic: "Arabic", hebrew: "Hebrew",
+    physics: "Physics", chemistry: "Chemistry", biology: "Biology",
+    history: "History", geography: "Geography", computer: "Computer",
+    sport: "Sport", art: "Art", music: "Music", science: "Science",
+    technology: "Technology", programming: "Programming",
+    economics: "Economics", psychology: "Psychology"
   },
   ar: {
-    math: "الرياضيات",
-    english: "الإنجليزية",
-    arabic: "العربية",
-    hebrew: "العبرية",
-    physics: "الفيزياء",
-    chemistry: "الكيمياء",
-    biology: "الأحياء",
-    history: "التاريخ",
-    geography: "الجغرافيا",
-    computer: "الحاسوب",
-    sport: "الرياضة",
-    art: "الفنون",
-    music: "الموسيقى",
-    science: "العلوم",
-    technology: "التكنولوجيا",
-    programming: "البرمجة",
-    economics: "الاقتصاد",
-    psychology: "علم النفس"
+    math: "الرياضيات", english: "الإنجليزية", arabic: "العربية", hebrew: "العبرية",
+    physics: "الفيزياء", chemistry: "الكيمياء", biology: "الأحياء",
+    history: "التاريخ", geography: "الجغرافيا", computer: "الحاسوب",
+    sport: "الرياضة", art: "الفنون", music: "الموسيقى", science: "العلوم",
+    technology: "التكنولوجيا", programming: "البرمجة",
+    economics: "الاقتصاد", psychology: "علم النفس"
   },
   he: {
-    math: "מתמטיקה",
-    english: "אנגלית",
-    arabic: "ערבית",
-    hebrew: "עברית",
-    physics: "פיזיקה",
-    chemistry: "כימיה",
-    biology: "ביולוגיה",
-    history: "היסטוריה",
-    geography: "גיאוגרפיה",
-    computer: "מחשבים",
-    sport: "ספורט",
-    art: "אמנות",
-    music: "מוזיקה",
-    science: "מדעים",
-    technology: "טכנולוגיה",
-    programming: "תכנות",
-    economics: "כלכלה",
-    psychology: "פסיכולוגיה"
+    math: "מתמטיקה", english: "אנגלית", arabic: "ערבית", hebrew: "עברית",
+    physics: "פיזיקה", chemistry: "כימיה", biology: "ביולוגיה",
+    history: "היסטוריה", geography: "גיאוגרפיה", computer: "מחשבים",
+    sport: "ספורט", art: "אמנות", music: "מוזיקה", science: "מדעים",
+    technology: "טכנולוגיה", programming: "תכנות",
+    economics: "כלכלה", psychology: "פסיכולוגיה"
   }
 };
 
-/* LOGIN */
-
-function showStudentLogin() {
+window.showStudentLogin = function () {
   document.getElementById("studentLoginBox").style.display = "block";
   document.getElementById("teacherLoginBox").style.display = "none";
   document.getElementById("signUpBox").style.display = "none";
-}
+};
 
-function showTeacherLogin() {
+window.showTeacherLogin = function () {
   document.getElementById("studentLoginBox").style.display = "none";
   document.getElementById("teacherLoginBox").style.display = "block";
   document.getElementById("signUpBox").style.display = "none";
-}
+};
 
-function showSignUp() {
+window.showSignUp = function () {
   document.getElementById("studentLoginBox").style.display = "none";
   document.getElementById("teacherLoginBox").style.display = "none";
   document.getElementById("signUpBox").style.display = "block";
-}
+};
 
-function signUpTeacher() {
+window.signUpTeacher = async function () {
   const username = document.getElementById("teacherUsername").value.trim().toLowerCase();
   const password = document.getElementById("newTeacherPassword").value.trim();
 
@@ -94,36 +72,36 @@ function signUpTeacher() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  const snapshot = await get(child(ref(db), "teachers/" + username));
 
-  if (teachers[username]) {
+  if (snapshot.exists()) {
     alert("Username already exists");
     return;
   }
 
-  teachers[username] = {
+  await set(ref(db, "teachers/" + username), {
     password: password,
     students: {}
-  };
+  });
 
-  localStorage.setItem("teachers", JSON.stringify(teachers));
-
-  alert("Account created successfully");
+  alert("Account created successfully ✅");
   showTeacherLogin();
-}
+};
 
-function teacherEnter() {
+window.teacherEnter = async function () {
   const username = document.getElementById("loginUsername").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value;
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  const snapshot = await get(child(ref(db), "teachers/" + username));
 
-  if (!teachers[username]) {
+  if (!snapshot.exists()) {
     alert("User not found");
     return;
   }
 
-  if (teachers[username].password !== password) {
+  const teacher = snapshot.val();
+
+  if (teacher.password !== password) {
     alert("Wrong password");
     return;
   }
@@ -136,9 +114,9 @@ function teacherEnter() {
 
   setRole("teacher");
   loadTeacherTable();
-}
+};
 
-function studentEnter() {
+window.studentEnter = function () {
   const name = document.getElementById("studentLoginName").value.trim();
 
   if (name === "") {
@@ -153,11 +131,9 @@ function studentEnter() {
 
   setRole("student");
   searchStudent();
-}
+};
 
-/* ROLE */
-
-function setRole(role) {
+window.setRole = function (role) {
   const teacherArea = document.getElementById("teacherArea");
   const studentArea = document.getElementById("studentArea");
 
@@ -171,11 +147,9 @@ function setRole(role) {
 
   document.getElementById("result").style.display = "none";
   document.getElementById("pdfBtn").style.display = "none";
-}
+};
 
-/* LANGUAGE */
-
-function changeLanguage() {
+window.changeLanguage = function () {
   const lang = document.getElementById("language").value;
 
   document.querySelectorAll("[data-key]").forEach(el => {
@@ -216,11 +190,9 @@ function changeLanguage() {
   }
 
   document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
-}
+};
 
-/* TEACHER */
-
-function showInputs() {
+window.showInputs = function () {
   const selected = document.querySelectorAll(".subjects input:checked");
   const gradeInputs = document.getElementById("gradeInputs");
 
@@ -233,23 +205,15 @@ function showInputs() {
 
   selected.forEach(subject => {
     gradeInputs.innerHTML += `
-      <input 
-        type="number" 
-        class="grade" 
-        data-subject="${subject.value}" 
-        placeholder="${subject.value} grade"
-        min="0"
-        max="100"
-      >
+      <input type="number" class="grade" data-subject="${subject.value}" 
+      placeholder="${subject.value} grade" min="0" max="100">
     `;
   });
 
-  gradeInputs.innerHTML += `
-    <button onclick="calculate()">Save Student Result</button>
-  `;
-}
+  gradeInputs.innerHTML += `<button onclick="calculate()">Save Student Result</button>`;
+};
 
-function calculate() {
+window.calculate = async function () {
   const name = document.getElementById("name").value.trim();
   const grades = document.querySelectorAll(".grade");
 
@@ -281,11 +245,7 @@ function calculate() {
     }
 
     sum += grade;
-
-    subjects.push({
-      subject: subject,
-      grade: grade
-    });
+    subjects.push({ subject, grade });
   }
 
   const average = sum / grades.length;
@@ -293,6 +253,7 @@ function calculate() {
 
   const studentData = {
     name: name,
+    teacher: currentTeacher,
     subjects: subjects,
     total: sum,
     average: average.toFixed(2),
@@ -300,12 +261,12 @@ function calculate() {
     statusClass: level.className
   };
 
-  saveStudent(studentData);
+  await saveStudent(studentData);
   showReport(studentData);
   loadTeacherTable();
 
-  alert("Student result saved");
-}
+  alert("Student saved online ✅");
+};
 
 function getGradeLevel(avg) {
   if (avg >= 90) return { text: "Excellent ⭐", className: "excellent" };
@@ -315,22 +276,14 @@ function getGradeLevel(avg) {
   return { text: "Failed ❌", className: "fail" };
 }
 
-function saveStudent(studentData) {
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+async function saveStudent(studentData) {
+  const nameKey = studentData.name.toLowerCase();
 
-  if (!teachers[currentTeacher]) {
-    alert("Teacher account not found");
-    return;
-  }
-
-  teachers[currentTeacher].students[studentData.name.toLowerCase()] = studentData;
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
+  await set(ref(db, "teachers/" + currentTeacher + "/students/" + nameKey), studentData);
+  await set(ref(db, "students/" + nameKey), studentData);
 }
 
-/* STUDENT */
-
-function searchStudent() {
+window.searchStudent = async function () {
   const name = document.getElementById("name").value.trim().toLowerCase();
 
   if (name === "") {
@@ -338,17 +291,9 @@ function searchStudent() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let foundStudent = null;
+  const snapshot = await get(child(ref(db), "students/" + name));
 
-  for (let teacher in teachers) {
-    if (teachers[teacher].students[name]) {
-      foundStudent = teachers[teacher].students[name];
-      break;
-    }
-  }
-
-  if (!foundStudent) {
+  if (!snapshot.exists()) {
     document.getElementById("result").style.display = "block";
     document.getElementById("result").innerHTML = `
       <h3>Student not found ❌</h3>
@@ -358,10 +303,8 @@ function searchStudent() {
     return;
   }
 
-  showReport(foundStudent);
-}
-
-/* REPORT */
+  showReport(snapshot.val());
+};
 
 function showReport(student) {
   lastStudentData = student;
@@ -403,7 +346,7 @@ function showReport(student) {
   document.getElementById("pdfBtn").style.display = "block";
 }
 
-function loadTeacherTable() {
+window.loadTeacherTable = async function () {
   const teacherTable = document.getElementById("teacherTable");
 
   if (!currentTeacher) {
@@ -411,8 +354,8 @@ function loadTeacherTable() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let students = teachers[currentTeacher]?.students || {};
+  const snapshot = await get(child(ref(db), "teachers/" + currentTeacher + "/students"));
+  const students = snapshot.exists() ? snapshot.val() : {};
 
   let html = `
     <table>
@@ -435,7 +378,7 @@ function loadTeacherTable() {
 
   html += `</table>`;
   teacherTable.innerHTML = html;
-}
+};
 
 function drawChart(student) {
   const ctx = document.getElementById("gradesChart");
@@ -456,7 +399,7 @@ function drawChart(student) {
   });
 }
 
-function downloadPDF() {
+window.downloadPDF = function () {
   const content = document.getElementById("pdfContent");
 
   if (!content) {
@@ -464,14 +407,11 @@ function downloadPDF() {
     return;
   }
 
-  html2pdf()
-    .from(content)
-    .save("student-report.pdf");
-}
+  html2pdf().from(content).save("student-report.pdf");
+};
 
-function toggleDarkMode() {
+window.toggleDarkMode = function () {
   document.body.classList.toggle("dark-mode");
-}
+};
 
-/* START */
 showStudentLogin();
