@@ -514,3 +514,7 @@ footer {
     transform: translateY(0) scale(1);
   }
 }
+/* TEST IF CSS UPDATED */
+body {
+  border: 10px solid red !important;
+}
