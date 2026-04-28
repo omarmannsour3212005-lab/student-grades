@@ -2,11 +2,15 @@
   box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #667eea, #764ba2);
   min-height: 100vh;
-  margin: 0;
   color: #333;
 }
 
@@ -64,6 +68,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .login-box {
@@ -77,13 +82,28 @@ body {
 
 .login-actions {
   display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
 }
 
-.login-actions button {
+.main-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+
+.secondary-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.secondary-buttons button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
   font-size: 13px;
-  padding: 12px 8px;
 }
 
 .login-section {
@@ -250,10 +270,6 @@ footer {
     padding: 24px;
   }
 
-  .login-actions {
-    flex-direction: column;
-  }
-
   .card {
     width: 95%;
     padding: 22px;
@@ -261,6 +277,10 @@ footer {
 
   .subjects {
     grid-template-columns: 1fr;
+  }
+
+  .secondary-buttons {
+    flex-direction: row;
   }
 }
 
