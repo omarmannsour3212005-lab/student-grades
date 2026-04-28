@@ -1,64 +1,85 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+// FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
+  authDomain: "om-grade-system.firebaseapp.com",
+  databaseURL: "https://om-grade-system-default-rtdb.firebaseio.com",
+  projectId: "om-grade-system",
+  storageBucket: "om-grade-system.firebasestorage.app",
+  messagingSenderId: "1030779408678",
+  appId: "1:1030779408678:web:40f10973f03902327971e7"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// SWITCH
+function showStudentLogin() {
+  document.getElementById("studentBox").style.display = "block";
+  document.getElementById("teacherBox").style.display = "none";
+  document.getElementById("signupBox").style.display = "none";
 }
 
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+function showTeacherLogin() {
+  document.getElementById("studentBox").style.display = "none";
+  document.getElementById("teacherBox").style.display = "block";
+  document.getElementById("signupBox").style.display = "none";
 }
 
-.login-box {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 350px;
-  text-align: center;
+function showSignUp() {
+  document.getElementById("studentBox").style.display = "none";
+  document.getElementById("teacherBox").style.display = "none";
+  document.getElementById("signupBox").style.display = "block";
 }
 
-.login-actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+// STUDENT
+function studentEnter() {
+  const name = document.getElementById("studentName").value.toLowerCase();
+
+  db.ref("students/" + name).once("value")
+    .then(snap => {
+      if (!snap.exists()) {
+        alert("Student not found ❌");
+        return;
+      }
+
+      const data = snap.val();
+      let html = `<h3>${data.name}</h3>`;
+
+      data.subjects.forEach(s => {
+        html += `<p>${s.subject}: ${s.grade}</p>`;
+      });
+
+      html += `<p>Average: ${data.average}</p>`;
+
+      document.getElementById("result").innerHTML = html;
+    });
 }
 
-.login-actions button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-}
+// TEACHER
+function teacherEnter() {
+  const pass = document.getElementById("teacherPassword").value;
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  cursor: pointer;
-}
-
-.hint {
-  font-size: 12px;
-  color: gray;
-}
-
-@media (max-width: 600px) {
-  .login-box {
-    width: 90%;
+  if (pass !== "1234") {
+    alert("Wrong password");
+    return;
   }
+
+  alert("Teacher mode enabled");
+
+  // example add student
+  const student = {
+    name: "omar",
+    subjects: [
+      {subject: "Math", grade: 90},
+      {subject: "English", grade: 85}
+    ],
+    average: 87.5
+  };
+
+  db.ref("students/omar").set(student);
+}
+
+// SIGN UP
+function signUp() {
+  alert("Sign up saved (demo)");
 }
