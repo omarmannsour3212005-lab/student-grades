@@ -1,64 +1,49 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-}
-
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.login-box {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 350px;
-  text-align: center;
+html, body {
+  overflow-x: hidden;
 }
 
 .login-actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+  margin: 15px 0 !important;
 }
 
 .login-actions button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
+  flex: 1 !important;
+  width: auto !important;
+  font-size: 13px !important;
+  padding: 12px 8px !important;
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+.login-section {
+  margin-top: 15px !important;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  cursor: pointer;
-}
+@media (max-width: 768px) {
+  .login-page {
+    min-height: 75vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 20px !important;
+  }
 
-.hint {
-  font-size: 12px;
-  color: gray;
-}
-
-@media (max-width: 600px) {
   .login-box {
-    width: 90%;
+    width: 90% !important;
+    max-width: 360px !important;
+    padding: 30px !important;
+    border-radius: 24px !important;
+  }
+
+  .login-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+  }
+
+  .login-actions button {
+    font-size: 13px !important;
+    padding: 12px 6px !important;
   }
 }
