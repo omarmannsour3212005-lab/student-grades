@@ -1,67 +1,44 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
+  authDomain: "om-grade-system.firebaseapp.com",
+  databaseURL: "https://om-grade-system-default-rtdb.firebaseio.com",
+  projectId: "om-grade-system",
+  storageBucket: "om-grade-system.firebasestorage.app",
+  messagingSenderId: "1030779408678",
+  appId: "1:1030779408678:web:40f10973f03902327971e7"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 let lastStudentData = null;
 let chart = null;
 let currentTeacher = localStorage.getItem("currentTeacher") || null;
 
 const subjectTranslations = {
   en: {
-    math: "Math",
-    english: "English",
-    arabic: "Arabic",
-    hebrew: "Hebrew",
-    physics: "Physics",
-    chemistry: "Chemistry",
-    biology: "Biology",
-    history: "History",
-    geography: "Geography",
-    computer: "Computer",
-    sport: "Sport",
-    art: "Art",
-    music: "Music",
-    science: "Science",
-    technology: "Technology",
-    programming: "Programming",
-    economics: "Economics",
-    psychology: "Psychology"
+    math: "Math", english: "English", arabic: "Arabic", hebrew: "Hebrew",
+    physics: "Physics", chemistry: "Chemistry", biology: "Biology",
+    history: "History", geography: "Geography", computer: "Computer",
+    sport: "Sport", art: "Art", music: "Music", science: "Science",
+    technology: "Technology", programming: "Programming",
+    economics: "Economics", psychology: "Psychology"
   },
   ar: {
-    math: "الرياضيات",
-    english: "الإنجليزية",
-    arabic: "العربية",
-    hebrew: "العبرية",
-    physics: "الفيزياء",
-    chemistry: "الكيمياء",
-    biology: "الأحياء",
-    history: "التاريخ",
-    geography: "الجغرافيا",
-    computer: "الحاسوب",
-    sport: "الرياضة",
-    art: "الفنون",
-    music: "الموسيقى",
-    science: "العلوم",
-    technology: "التكنولوجيا",
-    programming: "البرمجة",
-    economics: "الاقتصاد",
-    psychology: "علم النفس"
+    math: "الرياضيات", english: "الإنجليزية", arabic: "العربية", hebrew: "العبرية",
+    physics: "الفيزياء", chemistry: "الكيمياء", biology: "الأحياء",
+    history: "التاريخ", geography: "الجغرافيا", computer: "الحاسوب",
+    sport: "الرياضة", art: "الفنون", music: "الموسيقى", science: "العلوم",
+    technology: "التكنولوجيا", programming: "البرمجة",
+    economics: "الاقتصاد", psychology: "علم النفس"
   },
   he: {
-    math: "מתמטיקה",
-    english: "אנגלית",
-    arabic: "ערבית",
-    hebrew: "עברית",
-    physics: "פיזיקה",
-    chemistry: "כימיה",
-    biology: "ביולוגיה",
-    history: "היסטוריה",
-    geography: "גיאוגרפיה",
-    computer: "מחשבים",
-    sport: "ספורט",
-    art: "אמנות",
-    music: "מוזיקה",
-    science: "מדעים",
-    technology: "טכנולוגיה",
-    programming: "תכנות",
-    economics: "כלכלה",
-    psychology: "פסיכולוגיה"
+    math: "מתמטיקה", english: "אנגלית", arabic: "ערבית", hebrew: "עברית",
+    physics: "פיזיקה", chemistry: "כימיה", biology: "ביולוגיה",
+    history: "היסטוריה", geography: "גיאוגרפיה", computer: "מחשבים",
+    sport: "ספורט", art: "אמנות", music: "מוזיקה", science: "מדעים",
+    technology: "טכנולוגיה", programming: "תכנות",
+    economics: "כלכלה", psychology: "פסיכולוגיה"
   }
 };
 
@@ -92,48 +69,48 @@ function signUpTeacher() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  db.ref("teachers/" + username).once("value").then(snapshot => {
+    if (snapshot.exists()) {
+      alert("Username already exists");
+      return;
+    }
 
-  if (teachers[username]) {
-    alert("Username already exists");
-    return;
-  }
-
-  teachers[username] = {
-    password: password,
-    students: {}
-  };
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
-
-  alert("Account created successfully");
-  showTeacherLogin();
+    db.ref("teachers/" + username).set({
+      password: password,
+      students: {}
+    }).then(() => {
+      alert("Account created successfully");
+      showTeacherLogin();
+    });
+  });
 }
 
 function teacherEnter() {
   const username = document.getElementById("loginUsername").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value;
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  db.ref("teachers/" + username).once("value").then(snapshot => {
+    if (!snapshot.exists()) {
+      alert("User not found");
+      return;
+    }
 
-  if (!teachers[username]) {
-    alert("User not found");
-    return;
-  }
+    const teacher = snapshot.val();
 
-  if (teachers[username].password !== password) {
-    alert("Wrong password");
-    return;
-  }
+    if (teacher.password !== password) {
+      alert("Wrong password");
+      return;
+    }
 
-  currentTeacher = username;
-  localStorage.setItem("currentTeacher", currentTeacher);
+    currentTeacher = username;
+    localStorage.setItem("currentTeacher", currentTeacher);
 
-  document.getElementById("loginPage").style.display = "none";
-  document.getElementById("app").style.display = "flex";
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("app").style.display = "flex";
 
-  setRole("teacher");
-  loadTeacherTable();
+    setRole("teacher");
+    loadTeacherTable();
+  });
 }
 
 function studentEnter() {
@@ -281,6 +258,7 @@ function calculate() {
 
   const studentData = {
     name: name,
+    teacher: currentTeacher,
     subjects: subjects,
     total: sum,
     average: average.toFixed(2),
@@ -292,7 +270,7 @@ function calculate() {
   showReport(studentData);
   loadTeacherTable();
 
-  alert("Student result saved");
+  alert("Student result saved online");
 }
 
 function getGradeLevel(avg) {
@@ -304,16 +282,10 @@ function getGradeLevel(avg) {
 }
 
 function saveStudent(studentData) {
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  const key = studentData.name.toLowerCase();
 
-  if (!teachers[currentTeacher]) {
-    alert("Teacher account not found");
-    return;
-  }
-
-  teachers[currentTeacher].students[studentData.name.toLowerCase()] = studentData;
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
+  db.ref("teachers/" + currentTeacher + "/students/" + key).set(studentData);
+  db.ref("students/" + key).set(studentData);
 }
 
 function searchStudent() {
@@ -324,27 +296,19 @@ function searchStudent() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let foundStudent = null;
-
-  for (let teacher in teachers) {
-    if (teachers[teacher].students[name]) {
-      foundStudent = teachers[teacher].students[name];
-      break;
+  db.ref("students/" + name).once("value").then(snapshot => {
+    if (!snapshot.exists()) {
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML = `
+        <h3>Student not found ❌</h3>
+        <p>Make sure you wrote the same name saved by the teacher.</p>
+      `;
+      document.getElementById("pdfBtn").style.display = "none";
+      return;
     }
-  }
 
-  if (!foundStudent) {
-    document.getElementById("result").style.display = "block";
-    document.getElementById("result").innerHTML = `
-      <h3>Student not found ❌</h3>
-      <p>Make sure you wrote the same name saved by the teacher.</p>
-    `;
-    document.getElementById("pdfBtn").style.display = "none";
-    return;
-  }
-
-  showReport(foundStudent);
+    showReport(snapshot.val());
+  });
 }
 
 function showReport(student) {
@@ -395,30 +359,31 @@ function loadTeacherTable() {
     return;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let students = teachers[currentTeacher]?.students || {};
+  db.ref("teachers/" + currentTeacher + "/students").once("value").then(snapshot => {
+    let students = snapshot.exists() ? snapshot.val() : {};
 
-  let html = `
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Average</th>
-        <th>Status</th>
-      </tr>
-  `;
-
-  for (let key in students) {
-    html += `
-      <tr>
-        <td>${students[key].name}</td>
-        <td>${students[key].average}</td>
-        <td class="${students[key].statusClass}">${students[key].status}</td>
-      </tr>
+    let html = `
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Average</th>
+          <th>Status</th>
+        </tr>
     `;
-  }
 
-  html += `</table>`;
-  teacherTable.innerHTML = html;
+    for (let key in students) {
+      html += `
+        <tr>
+          <td>${students[key].name}</td>
+          <td>${students[key].average}</td>
+          <td class="${students[key].statusClass}">${students[key].status}</td>
+        </tr>
+      `;
+    }
+
+    html += `</table>`;
+    teacherTable.innerHTML = html;
+  });
 }
 
 function drawChart(student) {
