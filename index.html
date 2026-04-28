@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OM Grade System</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- مهم جداً للموبايل -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="brand-logo">
       <div class="logo-icon">OM</div>
       <div>
-        <span class="logo-text"><b class="om">OM</b> Grade System</span>
+        <span class="logo-text">OM Grade System</span>
         <span class="logo-sub">Student Calculator</span>
       </div>
     </div>
@@ -21,96 +24,62 @@
     <button class="dark-btn" onclick="toggleDarkMode()">🌙</button>
   </nav>
 
+  <!-- LOGIN -->
   <div id="loginPage" class="login-page">
     <div class="login-box">
+
       <h2>OM Grade System</h2>
 
-      <div class="login-actions">
-        <button onclick="showStudentLogin()">Student</button>
-        <button onclick="showTeacherLogin()">Teacher Login</button>
-        <button onclick="showSignUp()">Sign Up</button>
+      <div class="login-buttons">
+        <button onclick="setLoginMode('student')">Student</button>
+        <button onclick="setLoginMode('teacher')">Teacher Login</button>
+        <button onclick="showSignup()">Sign Up</button>
       </div>
 
-      <div id="studentLoginBox" class="login-section">
-        <input id="studentLoginName" type="text" placeholder="Enter your name">
-        <button onclick="studentEnter()">Show My Grades</button>
-        <p class="hint">Student does not need password</p>
-      </div>
+      <input id="loginName" type="text" placeholder="Enter your name">
+      <input id="loginPassword" type="password" placeholder="Password (Teacher only)">
 
-      <div id="teacherLoginBox" class="login-section" style="display:none;">
-        <input id="loginUsername" type="text" placeholder="Username">
-        <input id="loginPassword" type="password" placeholder="Password">
-        <button onclick="teacherEnter()">Login</button>
-      </div>
+      <button onclick="login()">Login</button>
 
-      <div id="signUpBox" class="login-section" style="display:none;">
-        <input id="teacherUsername" type="text" placeholder="Create username">
-        <input id="newTeacherPassword" type="password" placeholder="Create password">
-        <button onclick="signUpTeacher()">Create Account</button>
-      </div>
+      <p class="hint">Student does not need password</p>
+
     </div>
   </div>
 
+  <!-- APP -->
   <main id="app" class="container" style="display:none;">
     <div class="card">
 
-      <select id="language" onchange="changeLanguage()">
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-        <option value="he">עברית</option>
-      </select>
-
-      <div class="role-box">
-        <button id="studentBtn" onclick="setRole('student')">Student</button>
-        <button id="teacherBtn" onclick="setRole('teacher')">Teacher</button>
-      </div>
-
-      <h1 id="title">OM Grade System</h1>
-      <p id="subtitle" class="subtitle">Student & Teacher Grades System</p>
+      <h1>OM Grade System</h1>
 
       <input id="name" type="text" placeholder="Student name">
 
+      <!-- STUDENT -->
       <div id="studentArea">
-        <button id="searchBtn" onclick="searchStudent()">Search Student</button>
+        <button onclick="searchStudent()">Search Student</button>
       </div>
 
+      <!-- TEACHER -->
       <div id="teacherArea">
+
         <div class="subjects">
-          <label><input type="checkbox" value="Math"> <span data-key="math">Math</span></label>
-          <label><input type="checkbox" value="English"> <span data-key="english">English</span></label>
-          <label><input type="checkbox" value="Arabic"> <span data-key="arabic">Arabic</span></label>
-          <label><input type="checkbox" value="Hebrew"> <span data-key="hebrew">Hebrew</span></label>
-          <label><input type="checkbox" value="Physics"> <span data-key="physics">Physics</span></label>
-          <label><input type="checkbox" value="Chemistry"> <span data-key="chemistry">Chemistry</span></label>
-          <label><input type="checkbox" value="Biology"> <span data-key="biology">Biology</span></label>
-          <label><input type="checkbox" value="History"> <span data-key="history">History</span></label>
-          <label><input type="checkbox" value="Geography"> <span data-key="geography">Geography</span></label>
-          <label><input type="checkbox" value="Computer"> <span data-key="computer">Computer</span></label>
-          <label><input type="checkbox" value="Sport"> <span data-key="sport">Sport</span></label>
-          <label><input type="checkbox" value="Art"> <span data-key="art">Art</span></label>
-          <label><input type="checkbox" value="Music"> <span data-key="music">Music</span></label>
-          <label><input type="checkbox" value="Science"> <span data-key="science">Science</span></label>
-          <label><input type="checkbox" value="Technology"> <span data-key="technology">Technology</span></label>
-          <label><input type="checkbox" value="Programming"> <span data-key="programming">Programming</span></label>
-          <label><input type="checkbox" value="Economics"> <span data-key="economics">Economics</span></label>
-          <label><input type="checkbox" value="Psychology"> <span data-key="psychology">Psychology</span></label>
+          <label><input type="checkbox" value="Math"> Math</label>
+          <label><input type="checkbox" value="English"> English</label>
+          <label><input type="checkbox" value="Arabic"> Arabic</label>
+          <label><input type="checkbox" value="Hebrew"> Hebrew</label>
         </div>
 
-        <button id="nextBtn" onclick="showInputs()">Next</button>
+        <button onclick="showInputs()">Next</button>
 
         <div id="gradeInputs"></div>
 
-        <h3 id="dashboardTitle">Teacher Dashboard</h3>
+        <h3>Teacher Dashboard</h3>
         <div id="teacherTable"></div>
+
       </div>
 
       <div id="result"></div>
-
       <canvas id="gradesChart"></canvas>
-
-      <button id="pdfBtn" onclick="downloadPDF()" style="display:none;">
-        Download PDF
-      </button>
 
     </div>
   </main>
@@ -120,7 +89,6 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="script.js"></script>
 
 </body>
