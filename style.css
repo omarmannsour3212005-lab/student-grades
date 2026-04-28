@@ -304,51 +304,28 @@ footer {
     transform: translateY(0);
   }
 }
-/* 📱 MAKE EVERYTHING BIGGER ON MOBILE */
+/* 📱 BIGGER LOGIN ON MOBILE */
 @media (max-width: 500px) {
 
-  body {
-    font-size: 18px;
-  }
-
-  h1, h2 {
-    font-size: 22px;
-  }
-
   .login-box {
-    padding: 28px;
+    width: 95%;
+    max-width: none; /* 🔥 أهم سطر */
+    padding: 30px;
+    border-radius: 30px;
   }
 
-  input, select {
+  h2 {
+    font-size: 24px;
+  }
+
+  input {
     font-size: 18px;
-    padding: 15px;
+    padding: 16px;
   }
 
   button {
     font-size: 18px;
-    padding: 15px;
-  }
-
-  .login-actions button {
-    font-size: 17px;
-  }
-
-  .logo-text {
-    font-size: 20px;
-  }
-
-  .logo-icon {
-    width: 55px;
-    height: 55px;
-    font-size: 18px;
-  }
-
-  .card {
-    padding: 25px;
-  }
-
-  .subjects label {
-    font-size: 16px;
+    padding: 16px;
   }
 
 }
