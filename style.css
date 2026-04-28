@@ -1,477 +1,306 @@
-let lastStudentData = null;
-let chart = null;
-let currentTeacher = localStorage.getItem("currentTeacher") || null;
-
-const subjectTranslations = {
-  en: {
-    math: "Math",
-    english: "English",
-    arabic: "Arabic",
-    hebrew: "Hebrew",
-    physics: "Physics",
-    chemistry: "Chemistry",
-    biology: "Biology",
-    history: "History",
-    geography: "Geography",
-    computer: "Computer",
-    sport: "Sport",
-    art: "Art",
-    music: "Music",
-    science: "Science",
-    technology: "Technology",
-    programming: "Programming",
-    economics: "Economics",
-    psychology: "Psychology"
-  },
-  ar: {
-    math: "الرياضيات",
-    english: "الإنجليزية",
-    arabic: "العربية",
-    hebrew: "العبرية",
-    physics: "الفيزياء",
-    chemistry: "الكيمياء",
-    biology: "الأحياء",
-    history: "التاريخ",
-    geography: "الجغرافيا",
-    computer: "الحاسوب",
-    sport: "الرياضة",
-    art: "الفنون",
-    music: "الموسيقى",
-    science: "العلوم",
-    technology: "التكنولوجيا",
-    programming: "البرمجة",
-    economics: "الاقتصاد",
-    psychology: "علم النفس"
-  },
-  he: {
-    math: "מתמטיקה",
-    english: "אנגלית",
-    arabic: "ערבית",
-    hebrew: "עברית",
-    physics: "פיזיקה",
-    chemistry: "כימיה",
-    biology: "ביולוגיה",
-    history: "היסטוריה",
-    geography: "גיאוגרפיה",
-    computer: "מחשבים",
-    sport: "ספורט",
-    art: "אמנות",
-    music: "מוזיקה",
-    science: "מדעים",
-    technology: "טכנולוגיה",
-    programming: "תכנות",
-    economics: "כלכלה",
-    psychology: "פסיכולוגיה"
-  }
-};
-
-/* LOGIN */
-
-function showStudentLogin() {
-  document.getElementById("studentLoginBox").style.display = "block";
-  document.getElementById("teacherLoginBox").style.display = "none";
-  document.getElementById("signUpBox").style.display = "none";
+* {
+  box-sizing: border-box;
 }
 
-function showTeacherLogin() {
-  document.getElementById("studentLoginBox").style.display = "none";
-  document.getElementById("teacherLoginBox").style.display = "block";
-  document.getElementById("signUpBox").style.display = "none";
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  margin: 0;
+  color: #333;
 }
 
-function showSignUp() {
-  document.getElementById("studentLoginBox").style.display = "none";
-  document.getElementById("teacherLoginBox").style.display = "none";
-  document.getElementById("signUpBox").style.display = "block";
+.navbar {
+  width: 100%;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-function signUpTeacher() {
-  const username = document.getElementById("teacherUsername").value.trim().toLowerCase();
-  const password = document.getElementById("newTeacherPassword").value.trim();
-
-  if (username === "" || password === "") {
-    alert("Enter username and password");
-    return;
-  }
-
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-
-  if (teachers[username]) {
-    alert("Username already exists");
-    return;
-  }
-
-  teachers[username] = {
-    password: password,
-    students: {}
-  };
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
-
-  alert("Account created successfully");
-  showTeacherLogin();
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
 }
 
-function teacherEnter() {
-  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
-  const password = document.getElementById("loginPassword").value;
-
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-
-  if (!teachers[username]) {
-    alert("User not found");
-    return;
-  }
-
-  if (teachers[username].password !== password) {
-    alert("Wrong password");
-    return;
-  }
-
-  currentTeacher = username;
-  localStorage.setItem("currentTeacher", currentTeacher);
-
-  document.getElementById("loginPage").style.display = "none";
-  document.getElementById("app").style.display = "flex";
-
-  setRole("teacher");
-  loadTeacherTable();
+.logo-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
 }
 
-function studentEnter() {
-  const name = document.getElementById("studentLoginName").value.trim();
-
-  if (name === "") {
-    alert("Write your name");
-    return;
-  }
-
-  document.getElementById("loginPage").style.display = "none";
-  document.getElementById("app").style.display = "flex";
-
-  document.getElementById("name").value = name;
-
-  setRole("student");
-  searchStudent();
+.logo-text {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
 }
 
-/* ROLE */
-
-function setRole(role) {
-  const teacherArea = document.getElementById("teacherArea");
-  const studentArea = document.getElementById("studentArea");
-
-  if (role === "teacher") {
-    teacherArea.style.display = "block";
-    studentArea.style.display = "none";
-  } else {
-    teacherArea.style.display = "none";
-    studentArea.style.display = "block";
-  }
-
-  document.getElementById("result").style.display = "none";
-  document.getElementById("pdfBtn").style.display = "none";
+.logo-sub {
+  font-size: 12px;
+  opacity: 0.85;
 }
 
-/* LANGUAGE */
-
-function changeLanguage() {
-  const lang = document.getElementById("language").value;
-
-  document.querySelectorAll("[data-key]").forEach(el => {
-    const key = el.getAttribute("data-key");
-    el.innerText = subjectTranslations[lang][key];
-  });
-
-  if (lang === "ar") {
-    document.getElementById("title").innerText = "نظام OM للعلامات";
-    document.getElementById("subtitle").innerText = "نظام علامات للطلاب والمعلمين";
-    document.getElementById("name").placeholder = "اسم الطالب";
-    document.getElementById("studentBtn").innerText = "طالب";
-    document.getElementById("teacherBtn").innerText = "معلم";
-    document.getElementById("searchBtn").innerText = "ابحث عن الطالب";
-    document.getElementById("nextBtn").innerText = "التالي";
-    document.getElementById("dashboardTitle").innerText = "لوحة المعلم";
-    document.getElementById("pdfBtn").innerText = "تحميل PDF";
-  } else if (lang === "he") {
-    document.getElementById("title").innerText = "מערכת ציונים OM";
-    document.getElementById("subtitle").innerText = "מערכת ציונים לתלמידים ומורים";
-    document.getElementById("name").placeholder = "שם התלמיד";
-    document.getElementById("studentBtn").innerText = "תלמיד";
-    document.getElementById("teacherBtn").innerText = "מורה";
-    document.getElementById("searchBtn").innerText = "חפש תלמיד";
-    document.getElementById("nextBtn").innerText = "הבא";
-    document.getElementById("dashboardTitle").innerText = "לוח מורה";
-    document.getElementById("pdfBtn").innerText = "הורד PDF";
-  } else {
-    document.getElementById("title").innerText = "OM Grade System";
-    document.getElementById("subtitle").innerText = "Student & Teacher Grades System";
-    document.getElementById("name").placeholder = "Student name";
-    document.getElementById("studentBtn").innerText = "Student";
-    document.getElementById("teacherBtn").innerText = "Teacher";
-    document.getElementById("searchBtn").innerText = "Search Student";
-    document.getElementById("nextBtn").innerText = "Next";
-    document.getElementById("dashboardTitle").innerText = "Teacher Dashboard";
-    document.getElementById("pdfBtn").innerText = "Download PDF";
-  }
-
-  document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
+.om {
+  color: #ffd700;
 }
 
-/* TEACHER */
-
-function showInputs() {
-  const selected = document.querySelectorAll(".subjects input:checked");
-  const gradeInputs = document.getElementById("gradeInputs");
-
-  gradeInputs.innerHTML = "";
-
-  if (selected.length === 0) {
-    alert("Choose at least one subject");
-    return;
-  }
-
-  selected.forEach(subject => {
-    gradeInputs.innerHTML += `
-      <input 
-        type="number" 
-        class="grade" 
-        data-subject="${subject.value}" 
-        placeholder="${subject.value} grade"
-        min="0"
-        max="100"
-      >
-    `;
-  });
-
-  gradeInputs.innerHTML += `
-    <button onclick="calculate()">Save Student Result</button>
-  `;
+.dark-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
-function calculate() {
-  const name = document.getElementById("name").value.trim();
-  const grades = document.querySelectorAll(".grade");
-
-  if (!currentTeacher) {
-    alert("Teacher must login first");
-    return;
-  }
-
-  if (name === "") {
-    alert("Write student name first");
-    return;
-  }
-
-  if (grades.length === 0) {
-    alert("Choose subjects first");
-    return;
-  }
-
-  let sum = 0;
-  let subjects = [];
-
-  for (let input of grades) {
-    const subject = input.getAttribute("data-subject");
-    const grade = Number(input.value);
-
-    if (input.value === "" || grade < 0 || grade > 100) {
-      alert("Each grade must be between 0 and 100");
-      return;
-    }
-
-    sum += grade;
-
-    subjects.push({
-      subject: subject,
-      grade: grade
-    });
-  }
-
-  const average = sum / grades.length;
-  const level = getGradeLevel(average);
-
-  const studentData = {
-    name: name,
-    subjects: subjects,
-    total: sum,
-    average: average.toFixed(2),
-    status: level.text,
-    statusClass: level.className
-  };
-
-  saveStudent(studentData);
-  showReport(studentData);
-  loadTeacherTable();
-
-  alert("Student result saved");
+.login-page {
+  min-height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-function getGradeLevel(avg) {
-  if (avg >= 90) return { text: "Excellent ⭐", className: "excellent" };
-  if (avg >= 80) return { text: "Very Good ✅", className: "pass" };
-  if (avg >= 70) return { text: "Good ✅", className: "pass" };
-  if (avg >= 50) return { text: "Passed ✅", className: "pass" };
-  return { text: "Failed ❌", className: "fail" };
+.login-box {
+  background: white;
+  width: 360px;
+  padding: 30px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.28);
 }
 
-function saveStudent(studentData) {
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-
-  if (!teachers[currentTeacher]) {
-    alert("Teacher account not found");
-    return;
-  }
-
-  teachers[currentTeacher].students[studentData.name.toLowerCase()] = studentData;
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
+.login-actions {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
 }
 
-/* STUDENT */
-
-function searchStudent() {
-  const name = document.getElementById("name").value.trim().toLowerCase();
-
-  if (name === "") {
-    alert("Write student name first");
-    return;
-  }
-
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let foundStudent = null;
-
-  for (let teacher in teachers) {
-    if (teachers[teacher].students[name]) {
-      foundStudent = teachers[teacher].students[name];
-      break;
-    }
-  }
-
-  if (!foundStudent) {
-    document.getElementById("result").style.display = "block";
-    document.getElementById("result").innerHTML = `
-      <h3>Student not found ❌</h3>
-      <p>Make sure you wrote the same name saved by the teacher.</p>
-    `;
-    document.getElementById("pdfBtn").style.display = "none";
-    return;
-  }
-
-  showReport(foundStudent);
+.login-actions button {
+  font-size: 13px;
+  padding: 12px 8px;
 }
 
-/* REPORT */
-
-function showReport(student) {
-  lastStudentData = student;
-
-  let rows = "";
-
-  student.subjects.forEach(item => {
-    rows += `
-      <tr>
-        <td>${item.subject}</td>
-        <td>${item.grade}</td>
-      </tr>
-    `;
-  });
-
-  const result = document.getElementById("result");
-  result.style.display = "block";
-
-  result.innerHTML = `
-    <div id="pdfContent">
-      <h3>Student Report</h3>
-      <p><b>Name:</b> ${student.name}</p>
-
-      <table>
-        <tr>
-          <th>Subject</th>
-          <th>Grade</th>
-        </tr>
-        ${rows}
-      </table>
-
-      <p><b>Total:</b> ${student.total}</p>
-      <p><b>Average:</b> ${student.average}</p>
-      <p><b>Result:</b> <span class="${student.statusClass}">${student.status}</span></p>
-    </div>
-  `;
-
-  drawChart(student);
-  document.getElementById("pdfBtn").style.display = "block";
+.login-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  animation: fadeIn 0.3s ease;
 }
 
-function loadTeacherTable() {
-  const teacherTable = document.getElementById("teacherTable");
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
 
-  if (!currentTeacher) {
-    teacherTable.innerHTML = "";
-    return;
+.card {
+  background: rgba(255,255,255,0.95);
+  width: 600px;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+  text-align: center;
+}
+
+.subtitle {
+  color: #777;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+.role-box {
+  display: flex;
+  gap: 10px;
+}
+
+.subjects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+  margin-top: 15px;
+}
+
+.subjects label {
+  background: #f7f7fb;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+#gradeInputs {
+  margin-top: 15px;
+}
+
+#result,
+#teacherTable {
+  margin-top: 20px;
+  text-align: left;
+  background: #f7f7fb;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+#result {
+  display: none;
+}
+
+#gradesChart {
+  margin-top: 20px;
+  max-height: 300px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.pass {
+  color: green;
+  font-weight: bold;
+}
+
+.fail {
+  color: red;
+  font-weight: bold;
+}
+
+.excellent {
+  color: goldenrod;
+  font-weight: bold;
+}
+
+footer {
+  text-align: center;
+  color: white;
+  padding: 15px;
+  margin-top: 25px;
+}
+
+.hint {
+  color: #777;
+  font-size: 13px;
+}
+
+/* DARK MODE */
+.dark-mode {
+  background: linear-gradient(135deg, #111827, #1f2937);
+}
+
+.dark-mode .card,
+.dark-mode .login-box {
+  background: #1f2937;
+  color: white;
+}
+
+.dark-mode input,
+.dark-mode select,
+.dark-mode .subjects label,
+.dark-mode #result,
+.dark-mode #teacherTable {
+  background: #111827;
+  color: white;
+  border-color: #444;
+}
+
+/* MOBILE ONLY FIX */
+@media (max-width: 500px) {
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    text-align: center;
   }
 
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-  let students = teachers[currentTeacher]?.students || {};
-
-  let html = `
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Average</th>
-        <th>Status</th>
-      </tr>
-  `;
-
-  for (let key in students) {
-    html += `
-      <tr>
-        <td>${students[key].name}</td>
-        <td>${students[key].average}</td>
-        <td class="${students[key].statusClass}">${students[key].status}</td>
-      </tr>
-    `;
+  .brand-logo {
+    justify-content: center;
   }
 
-  html += `</table>`;
-  teacherTable.innerHTML = html;
-}
-
-function drawChart(student) {
-  const ctx = document.getElementById("gradesChart");
-
-  if (chart) {
-    chart.destroy();
+  .logo-text {
+    font-size: 18px;
   }
 
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: student.subjects.map(s => s.subject),
-      datasets: [{
-        label: "Grades",
-        data: student.subjects.map(s => s.grade)
-      }]
-    }
-  });
-}
-
-function downloadPDF() {
-  const content = document.getElementById("pdfContent");
-
-  if (!content) {
-    alert("No report to download");
-    return;
+  .dark-btn {
+    align-self: center;
   }
 
-  html2pdf()
-    .from(content)
-    .save("student-report.pdf");
+  .login-page {
+    min-height: calc(100vh - 130px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .login-box {
+    width: 90%;
+    max-width: 350px;
+    padding: 24px;
+  }
+
+  .login-actions {
+    flex-direction: column;
+  }
+
+  .card {
+    width: 95%;
+    padding: 22px;
+  }
+
+  .subjects {
+    grid-template-columns: 1fr;
+  }
+
+  footer {
+    font-size: 12px;
+    margin-top: 10px;
+  }
 }
 
-function toggleDarkMode() {
-  document.body.classList.toggle("dark-mode");
-}
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 
-/* START */
-showStudentLogin();
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
