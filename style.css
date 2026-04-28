@@ -329,3 +329,45 @@ footer {
   }
 
 }
+/* FORCE MOBILE SIZE */
+@media (max-width: 768px) {
+  .login-page {
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+  }
+
+  .login-box {
+    width: 92vw !important;
+    max-width: none !important;
+    padding: 35px 25px !important;
+    border-radius: 30px !important;
+  }
+
+  .login-box h2 {
+    font-size: 32px !important;
+  }
+
+  .login-actions {
+    gap: 12px !important;
+  }
+
+  .login-actions button {
+    font-size: 18px !important;
+    padding: 18px 8px !important;
+  }
+
+  input,
+  select {
+    font-size: 20px !important;
+    padding: 18px !important;
+  }
+
+  button {
+    font-size: 20px !important;
+    padding: 18px !important;
+  }
+
+  .hint {
+    font-size: 17px !important;
+  }
+}
