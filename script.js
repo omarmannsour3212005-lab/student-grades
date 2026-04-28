@@ -65,8 +65,6 @@ const subjectTranslations = {
   }
 };
 
-/* LOGIN */
-
 function showStudentLogin() {
   document.getElementById("studentLoginBox").style.display = "block";
   document.getElementById("teacherLoginBox").style.display = "none";
@@ -155,8 +153,6 @@ function studentEnter() {
   searchStudent();
 }
 
-/* ROLE */
-
 function setRole(role) {
   const teacherArea = document.getElementById("teacherArea");
   const studentArea = document.getElementById("studentArea");
@@ -172,8 +168,6 @@ function setRole(role) {
   document.getElementById("result").style.display = "none";
   document.getElementById("pdfBtn").style.display = "none";
 }
-
-/* LANGUAGE */
 
 function changeLanguage() {
   const lang = document.getElementById("language").value;
@@ -217,8 +211,6 @@ function changeLanguage() {
 
   document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
 }
-
-/* TEACHER */
 
 function showInputs() {
   const selected = document.querySelectorAll(".subjects input:checked");
@@ -281,11 +273,7 @@ function calculate() {
     }
 
     sum += grade;
-
-    subjects.push({
-      subject: subject,
-      grade: grade
-    });
+    subjects.push({ subject, grade });
   }
 
   const average = sum / grades.length;
@@ -328,8 +316,6 @@ function saveStudent(studentData) {
   localStorage.setItem("teachers", JSON.stringify(teachers));
 }
 
-/* STUDENT */
-
 function searchStudent() {
   const name = document.getElementById("name").value.trim().toLowerCase();
 
@@ -360,8 +346,6 @@ function searchStudent() {
 
   showReport(foundStudent);
 }
-
-/* REPORT */
 
 function showReport(student) {
   lastStudentData = student;
@@ -473,5 +457,4 @@ function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
 
-/* START */
 showStudentLogin();
