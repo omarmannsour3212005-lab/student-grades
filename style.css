@@ -1,405 +1,74 @@
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  margin: 0;
-  overflow-x: hidden;
-}
-
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
+  margin: 0;
   background: linear-gradient(135deg, #667eea, #764ba2);
-  min-height: 100vh;
-  color: #333;
 }
 
 .navbar {
-  width: 100%;
-  padding: 18px 40px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  padding: 15px;
   color: white;
 }
 
 .logo-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffd700, #ff8c00);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  color: white;
-}
-
-.logo-text {
-  display: block;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-}
-
-.logo-sub {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.om {
-  color: #ffd700;
-}
-
-.dark-btn {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
+  background: orange;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .login-page {
-  min-height: 75vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  height: 80vh;
 }
 
 .login-box {
   background: white;
-  width: 360px;
-  padding: 30px;
-  border-radius: 24px;
+  padding: 25px;
+  border-radius: 20px;
+  width: 300px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.28);
 }
 
-.login-actions {
+.login-buttons {
   display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  gap: 5px;
 }
 
-.login-actions button {
-  flex: 1;
-  width: auto;
-  font-size: 13px;
-  padding: 12px 8px;
-}
-
-.login-section {
-  margin-top: 15px;
+button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  cursor: pointer;
 }
 
 .container {
   display: flex;
   justify-content: center;
-  padding: 20px;
 }
 
 .card {
-  background: rgba(255,255,255,0.95);
-  width: 600px;
+  background: white;
   padding: 30px;
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.28);
-  text-align: center;
+  border-radius: 20px;
+  width: 600px;
 }
 
-.subtitle {
-  color: #777;
-}
-
-input,
-select {
+input {
   width: 100%;
-  padding: 13px;
-  margin: 7px 0;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  outline: none;
-}
-
-button {
-  width: 100%;
-  padding: 13px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-.role-box {
-  display: flex;
-  gap: 10px;
+  padding: 10px;
+  margin: 10px 0;
 }
 
 .subjects {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  text-align: left;
-  margin-top: 15px;
-}
-
-.subjects label {
-  background: #f7f7fb;
-  padding: 10px;
-  border-radius: 12px;
-}
-
-#gradeInputs {
-  margin-top: 15px;
-}
-
-#result,
-#teacherTable {
-  margin-top: 20px;
-  text-align: left;
-  background: #f7f7fb;
-  padding: 15px;
-  border-radius: 16px;
 }
 
 #result {
-  display: none;
-}
-
-#gradesChart {
   margin-top: 20px;
-  max-height: 300px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-td, th {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-.pass {
-  color: green;
-  font-weight: bold;
-}
-
-.fail {
-  color: red;
-  font-weight: bold;
-}
-
-.excellent {
-  color: goldenrod;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  color: white;
-  padding: 15px;
-  margin-top: 25px;
-}
-
-.hint {
-  color: #777;
-  font-size: 13px;
-}
-
-.dark-mode {
-  background: linear-gradient(135deg, #111827, #1f2937);
-}
-
-.dark-mode .card,
-.dark-mode .login-box {
-  background: #1f2937;
-  color: white;
-}
-
-.dark-mode input,
-.dark-mode select,
-.dark-mode .subjects label,
-.dark-mode #result,
-.dark-mode #teacherTable {
-  background: #111827;
-  color: white;
-  border-color: #444;
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 15px 20px;
-  }
-
-  .logo-text {
-    font-size: 18px;
-  }
-
-  .login-page {
-    min-height: 75vh;
-    padding: 20px;
-  }
-
-  .login-box {
-    width: 90%;
-    max-width: 360px;
-    padding: 30px;
-  }
-
-  .login-actions {
-    flex-direction: row;
-  }
-
-  .login-actions button {
-    font-size: 13px;
-    padding: 12px 6px;
-  }
-
-  .card {
-    width: 95%;
-    padding: 22px;
-  }
-
-  .subjects {
-    grid-template-columns: 1fr;
-  }
-}
-
-  .dark-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-  }
-
-  .login-page {
-    padding: 30px 20px;
-  }
-
-  /* 🔥 الكارد بدون fullscreen */
-  .login-box {
-    width: 100%;
-    max-width: 420px; /* 🔥 هذا الفرق */
-    margin: auto;
-    padding: 30px 25px;
-    border-radius: 30px;
-
-    /* 🔥 glass effect */
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    border: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-
-    /* ✨ animation */
-    animation: appEnter 0.6s ease;
-  }
-
-  .login-box h2 {
-    font-size: 28px;
-    color: white;
-    margin-bottom: 20px;
-  }
-
-  .login-actions {
-    display: grid;
-    gap: 12px;
-  }
-
-  .login-actions button {
-    font-size: 18px;
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  input,
-  select {
-    font-size: 18px;
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  button {
-    font-size: 18px;
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  .hint {
-    color: white;
-    font-size: 15px;
-    opacity: 0.9;
-  }
-
-  /* نفس الفكرة للصفحة الثانية */
-  .card {
-    width: 100%;
-    max-width: 450px;
-    margin: auto;
-    padding: 25px;
-    border-radius: 30px;
-
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(18px);
-
-    border: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-
-    animation: appEnter 0.6s ease;
-  }
-
-  .card h1 {
-    color: white;
-    font-size: 28px;
-  }
-
-  .subtitle {
-    color: rgba(255,255,255,0.9);
-  }
-
-  .subjects {
-    grid-template-columns: 1fr;
-  }
-
-  .subjects label,
-  #result,
-  #teacherTable {
-    background: rgba(255,255,255,0.25);
-    color: white;
-    backdrop-filter: blur(10px);
-  }
-
-  footer {
-    color: white;
-  }
-}
-
-/* ✨ animation */
-@keyframes appEnter {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
