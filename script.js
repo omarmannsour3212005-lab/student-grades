@@ -1,107 +1,162 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
-  authDomain: "om-grade-system.firebaseapp.com",
-  databaseURL: "https://om-grade-system-default-rtdb.firebaseio.com",
-  projectId: "om-grade-system",
-  storageBucket: "om-grade-system.firebasestorage.app",
-  messagingSenderId: "1030779408678",
-  appId: "1:1030779408678:web:40f10973f03902327971e7"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
+let lastStudentData = null;
 let chart = null;
 let currentTeacher = localStorage.getItem("currentTeacher") || null;
 
+const subjectTranslations = {
+  en: {
+    math: "Math",
+    english: "English",
+    arabic: "Arabic",
+    hebrew: "Hebrew",
+    physics: "Physics",
+    chemistry: "Chemistry",
+    biology: "Biology",
+    history: "History",
+    geography: "Geography",
+    computer: "Computer",
+    sport: "Sport",
+    art: "Art",
+    music: "Music",
+    science: "Science",
+    technology: "Technology",
+    programming: "Programming",
+    economics: "Economics",
+    psychology: "Psychology"
+  },
+  ar: {
+    math: "الرياضيات",
+    english: "الإنجليزية",
+    arabic: "العربية",
+    hebrew: "العبرية",
+    physics: "الفيزياء",
+    chemistry: "الكيمياء",
+    biology: "الأحياء",
+    history: "التاريخ",
+    geography: "الجغرافيا",
+    computer: "الحاسوب",
+    sport: "الرياضة",
+    art: "الفنون",
+    music: "الموسيقى",
+    science: "العلوم",
+    technology: "التكنولوجيا",
+    programming: "البرمجة",
+    economics: "الاقتصاد",
+    psychology: "علم النفس"
+  },
+  he: {
+    math: "מתמטיקה",
+    english: "אנגלית",
+    arabic: "ערבית",
+    hebrew: "עברית",
+    physics: "פיזיקה",
+    chemistry: "כימיה",
+    biology: "ביולוגיה",
+    history: "היסטוריה",
+    geography: "גיאוגרפיה",
+    computer: "מחשבים",
+    sport: "ספורט",
+    art: "אמנות",
+    music: "מוזיקה",
+    science: "מדעים",
+    technology: "טכנולוגיה",
+    programming: "תכנות",
+    economics: "כלכלה",
+    psychology: "פסיכולוגיה"
+  }
+};
+
 function showStudentLogin() {
-  studentLoginBox.style.display = "block";
-  teacherLoginBox.style.display = "none";
-  signUpBox.style.display = "none";
+  document.getElementById("studentLoginBox").style.display = "block";
+  document.getElementById("teacherLoginBox").style.display = "none";
+  document.getElementById("signUpBox").style.display = "none";
 }
 
 function showTeacherLogin() {
-  studentLoginBox.style.display = "none";
-  teacherLoginBox.style.display = "block";
-  signUpBox.style.display = "none";
+  document.getElementById("studentLoginBox").style.display = "none";
+  document.getElementById("teacherLoginBox").style.display = "block";
+  document.getElementById("signUpBox").style.display = "none";
 }
 
 function showSignUp() {
-  studentLoginBox.style.display = "none";
-  teacherLoginBox.style.display = "none";
-  signUpBox.style.display = "block";
+  document.getElementById("studentLoginBox").style.display = "none";
+  document.getElementById("teacherLoginBox").style.display = "none";
+  document.getElementById("signUpBox").style.display = "block";
 }
 
 function signUpTeacher() {
-  const username = teacherUsername.value.trim().toLowerCase();
-  const password = newTeacherPassword.value.trim();
+  const username = document.getElementById("teacherUsername").value.trim().toLowerCase();
+  const password = document.getElementById("newTeacherPassword").value.trim();
 
-  if (!username || !password) {
+  if (username === "" || password === "") {
     alert("Enter username and password");
     return;
   }
 
-  db.ref("teachers/" + username).once("value").then(snap => {
-    if (snap.exists()) {
-      alert("Username already exists");
-      return;
-    }
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
 
-    db.ref("teachers/" + username).set({
-      password: password,
-      students: {}
-    }).then(() => {
-      alert("Account created successfully ✅");
-      showTeacherLogin();
-    });
-  });
+  if (teachers[username]) {
+    alert("Username already exists");
+    return;
+  }
+
+  teachers[username] = {
+    password: password,
+    students: {}
+  };
+
+  localStorage.setItem("teachers", JSON.stringify(teachers));
+
+  alert("Account created successfully");
+  showTeacherLogin();
 }
 
 function teacherEnter() {
-  const username = loginUsername.value.trim().toLowerCase();
-  const password = loginPassword.value;
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
 
-  db.ref("teachers/" + username).once("value").then(snap => {
-    if (!snap.exists()) {
-      alert("User not found");
-      return;
-    }
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
 
-    const teacher = snap.val();
+  if (!teachers[username]) {
+    alert("User not found");
+    return;
+  }
 
-    if (teacher.password !== password) {
-      alert("Wrong password");
-      return;
-    }
+  if (teachers[username].password !== password) {
+    alert("Wrong password");
+    return;
+  }
 
-    currentTeacher = username;
-    localStorage.setItem("currentTeacher", currentTeacher);
+  currentTeacher = username;
+  localStorage.setItem("currentTeacher", currentTeacher);
 
-    loginPage.style.display = "none";
-    app.style.display = "flex";
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("app").style.display = "flex";
 
-    setRole("teacher");
-    loadTeacherTable();
-  });
+  setRole("teacher");
+  loadTeacherTable();
 }
 
 function studentEnter() {
-  const studentName = studentLoginName.value.trim();
+  const name = document.getElementById("studentLoginName").value.trim();
 
-  if (!studentName) {
+  if (name === "") {
     alert("Write your name");
     return;
   }
 
-  loginPage.style.display = "none";
-  app.style.display = "flex";
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("app").style.display = "flex";
 
-  name.value = studentName;
+  document.getElementById("name").value = name;
+
   setRole("student");
   searchStudent();
 }
 
 function setRole(role) {
+  const teacherArea = document.getElementById("teacherArea");
+  const studentArea = document.getElementById("studentArea");
+
   if (role === "teacher") {
     teacherArea.style.display = "block";
     studentArea.style.display = "none";
@@ -110,12 +165,57 @@ function setRole(role) {
     studentArea.style.display = "block";
   }
 
-  result.style.display = "none";
-  pdfBtn.style.display = "none";
+  document.getElementById("result").style.display = "none";
+  document.getElementById("pdfBtn").style.display = "none";
+}
+
+function changeLanguage() {
+  const lang = document.getElementById("language").value;
+
+  document.querySelectorAll("[data-key]").forEach(el => {
+    const key = el.getAttribute("data-key");
+    el.innerText = subjectTranslations[lang][key];
+  });
+
+  if (lang === "ar") {
+    document.getElementById("title").innerText = "نظام OM للعلامات";
+    document.getElementById("subtitle").innerText = "نظام علامات للطلاب والمعلمين";
+    document.getElementById("name").placeholder = "اسم الطالب";
+    document.getElementById("studentBtn").innerText = "طالب";
+    document.getElementById("teacherBtn").innerText = "معلم";
+    document.getElementById("searchBtn").innerText = "ابحث عن الطالب";
+    document.getElementById("nextBtn").innerText = "التالي";
+    document.getElementById("dashboardTitle").innerText = "لوحة المعلم";
+    document.getElementById("pdfBtn").innerText = "تحميل PDF";
+  } else if (lang === "he") {
+    document.getElementById("title").innerText = "מערכת ציונים OM";
+    document.getElementById("subtitle").innerText = "מערכת ציונים לתלמידים ומורים";
+    document.getElementById("name").placeholder = "שם התלמיד";
+    document.getElementById("studentBtn").innerText = "תלמיד";
+    document.getElementById("teacherBtn").innerText = "מורה";
+    document.getElementById("searchBtn").innerText = "חפש תלמיד";
+    document.getElementById("nextBtn").innerText = "הבא";
+    document.getElementById("dashboardTitle").innerText = "לוח מורה";
+    document.getElementById("pdfBtn").innerText = "הורד PDF";
+  } else {
+    document.getElementById("title").innerText = "OM Grade System";
+    document.getElementById("subtitle").innerText = "Student & Teacher Grades System";
+    document.getElementById("name").placeholder = "Student name";
+    document.getElementById("studentBtn").innerText = "Student";
+    document.getElementById("teacherBtn").innerText = "Teacher";
+    document.getElementById("searchBtn").innerText = "Search Student";
+    document.getElementById("nextBtn").innerText = "Next";
+    document.getElementById("dashboardTitle").innerText = "Teacher Dashboard";
+    document.getElementById("pdfBtn").innerText = "Download PDF";
+  }
+
+  document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
 }
 
 function showInputs() {
   const selected = document.querySelectorAll(".subjects input:checked");
+  const gradeInputs = document.getElementById("gradeInputs");
+
   gradeInputs.innerHTML = "";
 
   if (selected.length === 0) {
@@ -125,15 +225,24 @@ function showInputs() {
 
   selected.forEach(subject => {
     gradeInputs.innerHTML += `
-      <input type="number" class="grade" data-subject="${subject.value}" placeholder="${subject.value} grade" min="0" max="100">
+      <input 
+        type="number" 
+        class="grade" 
+        data-subject="${subject.value}" 
+        placeholder="${subject.value} grade"
+        min="0"
+        max="100"
+      >
     `;
   });
 
-  gradeInputs.innerHTML += `<button onclick="calculate()">Save Student Result</button>`;
+  gradeInputs.innerHTML += `
+    <button onclick="calculate()">Save Student Result</button>
+  `;
 }
 
 function calculate() {
-  const studentName = name.value.trim();
+  const name = document.getElementById("name").value.trim();
   const grades = document.querySelectorAll(".grade");
 
   if (!currentTeacher) {
@@ -141,7 +250,7 @@ function calculate() {
     return;
   }
 
-  if (!studentName) {
+  if (name === "") {
     alert("Write student name first");
     return;
   }
@@ -155,6 +264,7 @@ function calculate() {
   let subjects = [];
 
   for (let input of grades) {
+    const subject = input.getAttribute("data-subject");
     const grade = Number(input.value);
 
     if (input.value === "" || grade < 0 || grade > 100) {
@@ -163,8 +273,9 @@ function calculate() {
     }
 
     sum += grade;
+
     subjects.push({
-      subject: input.dataset.subject,
+      subject: subject,
       grade: grade
     });
   }
@@ -173,8 +284,7 @@ function calculate() {
   const level = getGradeLevel(average);
 
   const studentData = {
-    name: studentName,
-    teacher: currentTeacher,
+    name: name,
     subjects: subjects,
     total: sum,
     average: average.toFixed(2),
@@ -182,40 +292,68 @@ function calculate() {
     statusClass: level.className
   };
 
-  const key = studentName.toLowerCase();
+  saveStudent(studentData);
+  showReport(studentData);
+  loadTeacherTable();
 
-  db.ref("teachers/" + currentTeacher + "/students/" + key).set(studentData);
-  db.ref("students/" + key).set(studentData).then(() => {
-    showReport(studentData);
-    loadTeacherTable();
-    alert("Student saved online ✅");
-  });
+  alert("Student result saved");
+}
+
+function getGradeLevel(avg) {
+  if (avg >= 90) return { text: "Excellent ⭐", className: "excellent" };
+  if (avg >= 80) return { text: "Very Good ✅", className: "pass" };
+  if (avg >= 70) return { text: "Good ✅", className: "pass" };
+  if (avg >= 50) return { text: "Passed ✅", className: "pass" };
+  return { text: "Failed ❌", className: "fail" };
+}
+
+function saveStudent(studentData) {
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+
+  if (!teachers[currentTeacher]) {
+    alert("Teacher account not found");
+    return;
+  }
+
+  teachers[currentTeacher].students[studentData.name.toLowerCase()] = studentData;
+
+  localStorage.setItem("teachers", JSON.stringify(teachers));
 }
 
 function searchStudent() {
-  const studentName = name.value.trim().toLowerCase();
+  const name = document.getElementById("name").value.trim().toLowerCase();
 
-  if (!studentName) {
+  if (name === "") {
     alert("Write student name first");
     return;
   }
 
-  db.ref("students/" + studentName).once("value").then(snap => {
-    if (!snap.exists()) {
-      result.style.display = "block";
-      result.innerHTML = `
-        <h3>Student not found ❌</h3>
-        <p>Make sure you wrote the same name saved by the teacher.</p>
-      `;
-      pdfBtn.style.display = "none";
-      return;
-    }
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  let foundStudent = null;
 
-    showReport(snap.val());
-  });
+  for (let teacher in teachers) {
+    if (teachers[teacher].students[name]) {
+      foundStudent = teachers[teacher].students[name];
+      break;
+    }
+  }
+
+  if (!foundStudent) {
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+      <h3>Student not found ❌</h3>
+      <p>Make sure you wrote the same name saved by the teacher.</p>
+    `;
+    document.getElementById("pdfBtn").style.display = "none";
+    return;
+  }
+
+  showReport(foundStudent);
 }
 
 function showReport(student) {
+  lastStudentData = student;
+
   let rows = "";
 
   student.subjects.forEach(item => {
@@ -227,6 +365,7 @@ function showReport(student) {
     `;
   });
 
+  const result = document.getElementById("result");
   result.style.display = "block";
 
   result.innerHTML = `
@@ -249,54 +388,49 @@ function showReport(student) {
   `;
 
   drawChart(student);
-  pdfBtn.style.display = "block";
+  document.getElementById("pdfBtn").style.display = "block";
 }
 
 function loadTeacherTable() {
+  const teacherTable = document.getElementById("teacherTable");
+
   if (!currentTeacher) {
     teacherTable.innerHTML = "";
     return;
   }
 
-  db.ref("teachers/" + currentTeacher + "/students").once("value").then(snap => {
-    const students = snap.exists() ? snap.val() : {};
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+  let students = teachers[currentTeacher]?.students || {};
 
-    let html = `
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Average</th>
-          <th>Status</th>
-        </tr>
+  let html = `
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Average</th>
+        <th>Status</th>
+      </tr>
+  `;
+
+  for (let key in students) {
+    html += `
+      <tr>
+        <td>${students[key].name}</td>
+        <td>${students[key].average}</td>
+        <td class="${students[key].statusClass}">${students[key].status}</td>
+      </tr>
     `;
+  }
 
-    for (let key in students) {
-      html += `
-        <tr>
-          <td>${students[key].name}</td>
-          <td>${students[key].average}</td>
-          <td class="${students[key].statusClass}">${students[key].status}</td>
-        </tr>
-      `;
-    }
-
-    html += `</table>`;
-    teacherTable.innerHTML = html;
-  });
-}
-
-function getGradeLevel(avg) {
-  if (avg >= 90) return { text: "Excellent ⭐", className: "excellent" };
-  if (avg >= 80) return { text: "Very Good ✅", className: "pass" };
-  if (avg >= 70) return { text: "Good ✅", className: "pass" };
-  if (avg >= 50) return { text: "Passed ✅", className: "pass" };
-  return { text: "Failed ❌", className: "fail" };
+  html += `</table>`;
+  teacherTable.innerHTML = html;
 }
 
 function drawChart(student) {
   const ctx = document.getElementById("gradesChart");
 
-  if (chart) chart.destroy();
+  if (chart) {
+    chart.destroy();
+  }
 
   chart = new Chart(ctx, {
     type: "bar",
@@ -312,19 +446,19 @@ function drawChart(student) {
 
 function downloadPDF() {
   const content = document.getElementById("pdfContent");
+
   if (!content) {
     alert("No report to download");
     return;
   }
 
-  html2pdf().from(content).save("student-report.pdf");
+  html2pdf()
+    .from(content)
+    .save("student-report.pdf");
 }
 
 function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
 
-function changeLanguage() {}
-
 showStudentLogin();
-setRole("student");
