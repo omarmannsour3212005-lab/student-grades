@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OM Grade System</title>
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
+
 <body>
 
   <nav class="navbar">
@@ -21,7 +21,6 @@
     <button class="dark-btn" onclick="toggleDarkMode()">🌙</button>
   </nav>
 
-  <!-- LOGIN PAGE -->
   <div id="loginPage" class="login-page">
     <div class="login-box">
       <h2>OM Grade System</h2>
@@ -48,12 +47,10 @@
         <input id="teacherUsername" type="text" placeholder="Create username">
         <input id="newTeacherPassword" type="password" placeholder="Create password">
         <button onclick="signUpTeacher()">Create Account</button>
-        <p class="hint">Teacher name will not appear to students</p>
       </div>
     </div>
   </div>
 
-  <!-- APP -->
   <main id="app" class="container" style="display:none;">
     <div class="card">
 
@@ -124,7 +121,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js?v=20"></script>
 
 </body>
 </html>
