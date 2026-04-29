@@ -25,7 +25,8 @@ const subjectTranslations = {
     economics: "Economics", psychology: "Psychology",
     report: "Student Report", subject: "Subject", grade: "Grade",
     name: "Name", total: "Total", average: "Average",
-    result: "Result", status: "Status", dashboard: "Teacher Dashboard"
+    result: "Result", status: "Status", dashboard: "Teacher Dashboard",
+    saveResult: "Save Student Result", gradeWord: "grade"
   },
 
   ar: {
@@ -37,7 +38,8 @@ const subjectTranslations = {
     economics: "الاقتصاد", psychology: "علم النفس",
     report: "تقرير الطالب", subject: "المادة", grade: "العلامة",
     name: "الاسم", total: "المجموع", average: "المعدل",
-    result: "النتيجة", status: "الحالة", dashboard: "لوحة المعلم"
+    result: "النتيجة", status: "الحالة", dashboard: "لوحة المعلم",
+    saveResult: "حفظ نتيجة الطالب", gradeWord: "العلامة"
   },
 
   he: {
@@ -49,7 +51,8 @@ const subjectTranslations = {
     economics: "כלכלה", psychology: "פסיכולוגיה",
     report: "דוח תלמיד", subject: "מקצוע", grade: "ציון",
     name: "שם", total: "סך הכל", average: "ממוצע",
-    result: "תוצאה", status: "סטטוס", dashboard: "לוח מורה"
+    result: "תוצאה", status: "סטטוס", dashboard: "לוח מורה",
+    saveResult: "שמור תוצאת תלמיד", gradeWord: "ציון"
   }
 };
 
@@ -262,6 +265,7 @@ function changeLanguage() {
 function showInputs() {
   const selected = document.querySelectorAll(".subjects input:checked");
   const gradeInputs = document.getElementById("gradeInputs");
+  const t = getT();
 
   gradeInputs.innerHTML = "";
 
@@ -276,7 +280,7 @@ function showInputs() {
         type="number" 
         class="grade" 
         data-subject="${subject.value}" 
-        placeholder="${translateSubject(subject.value)} grade"
+        placeholder="${translateSubject(subject.value)} ${t.gradeWord}"
         min="0"
         max="100"
       >
@@ -284,7 +288,7 @@ function showInputs() {
   });
 
   gradeInputs.innerHTML += `
-    <button onclick="calculate()">Save Student Result</button>
+    <button onclick="calculate()">${t.saveResult}</button>
   `;
 }
 
