@@ -87,7 +87,7 @@ function signUpTeacher() {
       showTeacherLogin();
     })
     .catch(error => {
-      alert("Firebase error: " + error.message);
+      showAlert("Firebase error: " + error.message, "error");;
       console.error(error);
     });
 }
