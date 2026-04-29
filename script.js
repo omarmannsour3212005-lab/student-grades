@@ -22,25 +22,41 @@ const subjectTranslations = {
     history: "History", geography: "Geography", computer: "Computer",
     sport: "Sport", art: "Art", music: "Music", science: "Science",
     technology: "Technology", programming: "Programming",
-    economics: "Economics", psychology: "Psychology"
+    economics: "Economics", psychology: "Psychology",
+    report: "Student Report", subject: "Subject", grade: "Grade",
+    name: "Name", total: "Total", average: "Average", result: "Result",
+    status: "Status", dashboard: "Teacher Dashboard"
   },
+
   ar: {
     math: "الرياضيات", english: "الإنجليزية", arabic: "العربية", hebrew: "العبرية",
     physics: "الفيزياء", chemistry: "الكيمياء", biology: "الأحياء",
     history: "التاريخ", geography: "الجغرافيا", computer: "الحاسوب",
     sport: "الرياضة", art: "الفنون", music: "الموسيقى", science: "العلوم",
     technology: "التكنولوجيا", programming: "البرمجة",
-    economics: "الاقتصاد", psychology: "علم النفس"
+    economics: "الاقتصاد", psychology: "علم النفس",
+    report: "تقرير الطالب", subject: "المادة", grade: "العلامة",
+    name: "الاسم", total: "المجموع", average: "المعدل", result: "النتيجة",
+    status: "الحالة", dashboard: "لوحة المعلم"
   },
+
   he: {
     math: "מתמטיקה", english: "אנגלית", arabic: "ערבית", hebrew: "עברית",
     physics: "פיזיקה", chemistry: "כימיה", biology: "ביולוגיה",
     history: "היסטוריה", geography: "גיאוגרפיה", computer: "מחשבים",
     sport: "ספורט", art: "אמנות", music: "מוזיקה", science: "מדעים",
     technology: "טכנולוגיה", programming: "תכנות",
-    economics: "כלכלה", psychology: "פסיכולוגיה"
+    economics: "כלכלה", psychology: "פסיכולוגיה",
+    report: "דוח תלמיד", subject: "מקצוע", grade: "ציון",
+    name: "שם", total: "סך הכל", average: "ממוצע", result: "תוצאה",
+    status: "סטטוס", dashboard: "לוח מורה"
   }
 };
+
+function getT() {
+  const lang = document.getElementById("language")?.value || "en";
+  return subjectTranslations[lang];
+}
 
 function showStudentLogin() {
   document.getElementById("studentLoginBox").style.display = "block";
@@ -82,11 +98,11 @@ function signUpTeacher() {
       });
     })
     .then(() => {
-      showAlert("Account created successfully ", "success");
+      showAlert("Account created successfully", "success");
       showTeacherLogin();
     })
     .catch(error => {
-     showAlert("Firebase error: " + error.message, "error");
+      showAlert("Firebase error: " + error.message, "error");
       console.error(error);
     });
 }
@@ -103,7 +119,7 @@ function teacherEnter() {
   db.ref("teachers/" + username).once("value")
     .then(snapshot => {
       if (!snapshot.exists()) {
-       showAlert("User not found", "error");
+        showAlert("User not found", "error");
         return;
       }
 
@@ -128,11 +144,12 @@ function teacherEnter() {
       console.error(error);
     });
 }
+
 function studentEnter() {
   const name = document.getElementById("studentLoginName").value.trim();
 
   if (name === "") {
-   showAlert("Write your name", "error");
+    showAlert("Write your name", "error");
     return;
   }
 
@@ -169,6 +186,8 @@ function changeLanguage() {
     el.innerText = subjectTranslations[lang][key];
   });
 
+  const t = subjectTranslations[lang];
+
   if (lang === "ar") {
     document.getElementById("title").innerText = "نظام OM للعلامات";
     document.getElementById("subtitle").innerText = "نظام علامات للطلاب والمعلمين";
@@ -177,7 +196,6 @@ function changeLanguage() {
     document.getElementById("teacherBtn").innerText = "معلم";
     document.getElementById("searchBtn").innerText = "ابحث عن الطالب";
     document.getElementById("nextBtn").innerText = "التالي";
-    document.getElementById("dashboardTitle").innerText = "لوحة المعلم";
     document.getElementById("pdfBtn").innerText = "تحميل PDF";
   } else if (lang === "he") {
     document.getElementById("title").innerText = "מערכת ציונים OM";
@@ -187,7 +205,6 @@ function changeLanguage() {
     document.getElementById("teacherBtn").innerText = "מורה";
     document.getElementById("searchBtn").innerText = "חפש תלמיד";
     document.getElementById("nextBtn").innerText = "הבא";
-    document.getElementById("dashboardTitle").innerText = "לוח מורה";
     document.getElementById("pdfBtn").innerText = "הורד PDF";
   } else {
     document.getElementById("title").innerText = "OM Grade System";
@@ -197,11 +214,14 @@ function changeLanguage() {
     document.getElementById("teacherBtn").innerText = "Teacher";
     document.getElementById("searchBtn").innerText = "Search Student";
     document.getElementById("nextBtn").innerText = "Next";
-    document.getElementById("dashboardTitle").innerText = "Teacher Dashboard";
     document.getElementById("pdfBtn").innerText = "Download PDF";
   }
 
+  document.getElementById("dashboardTitle").innerText = t.dashboard;
   document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
+
+  if (lastStudentData) showReport(lastStudentData);
+  loadTeacherTable();
 }
 
 function showInputs() {
@@ -329,6 +349,7 @@ function searchStudent() {
 function showReport(student) {
   lastStudentData = student;
 
+  const t = getT();
   let rows = "";
 
   student.subjects.forEach(item => {
@@ -345,20 +366,20 @@ function showReport(student) {
 
   result.innerHTML = `
     <div id="pdfContent">
-      <h3>Student Report</h3>
-      <p><b>Name:</b> ${student.name}</p>
+      <h3>${t.report}</h3>
+      <p><b>${t.name}:</b> ${student.name}</p>
 
       <table>
         <tr>
-          <th>Subject</th>
-          <th>Grade</th>
+          <th>${t.subject}</th>
+          <th>${t.grade}</th>
         </tr>
         ${rows}
       </table>
 
-      <p><b>Total:</b> ${student.total}</p>
-      <p><b>Average:</b> ${student.average}</p>
-      <p><b>Result:</b> <span class="${student.statusClass}">${student.status}</span></p>
+      <p><b>${t.total}:</b> ${student.total}</p>
+      <p><b>${t.average}:</b> ${student.average}</p>
+      <p><b>${t.result}:</b> <span class="${student.statusClass}">${student.status}</span></p>
     </div>
   `;
 
@@ -368,6 +389,7 @@ function showReport(student) {
 
 function loadTeacherTable() {
   const teacherTable = document.getElementById("teacherTable");
+  const t = getT();
 
   if (!currentTeacher) {
     teacherTable.innerHTML = "";
@@ -380,9 +402,9 @@ function loadTeacherTable() {
     let html = `
       <table>
         <tr>
-          <th>Name</th>
-          <th>Average</th>
-          <th>Status</th>
+          <th>${t.name}</th>
+          <th>${t.average}</th>
+          <th>${t.status}</th>
         </tr>
     `;
 
@@ -428,16 +450,12 @@ function downloadPDF() {
     return;
   }
 
-  html2pdf()
-    .from(content)
-    .save("student-report.pdf");
+  html2pdf().from(content).save("student-report.pdf");
 }
 
 function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
-
-showStudentLogin();
 
 function showAlert(message, type = "info") {
   const overlay = document.getElementById("customAlert");
@@ -466,3 +484,6 @@ function showAlert(message, type = "info") {
 function closeAlert() {
   document.getElementById("customAlert").classList.remove("show");
 }
+
+showStudentLogin();
+changeLanguage();
