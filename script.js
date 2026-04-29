@@ -443,12 +443,22 @@ function showAlert(message, type = "info") {
   const overlay = document.getElementById("customAlert");
   const title = document.getElementById("alertTitle");
   const text = document.getElementById("alertMessage");
+  const icon = document.getElementById("alertIcon");
+
+  if (!overlay) return;
 
   text.innerText = message;
 
-  if (type === "success") title.innerText = "Success ✅";
-  else if (type === "error") title.innerText = "Error ❌";
-  else title.innerText = "Notice ℹ️";
+  if (type === "success") {
+    title.innerText = "Success";
+    icon.innerText = "✅";
+  } else if (type === "error") {
+    title.innerText = "Error";
+    icon.innerText = "❌";
+  } else {
+    title.innerText = "Notice";
+    icon.innerText = "ℹ️";
+  }
 
   overlay.classList.add("show");
 }
