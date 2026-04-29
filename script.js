@@ -83,7 +83,7 @@ function signUpTeacher() {
       });
     })
     .then(() => {
-      alert("Account created successfully ✅");
+      showAlert("Account created successfully ✅", "success");
       showTeacherLogin();
     })
     .catch(error => {
