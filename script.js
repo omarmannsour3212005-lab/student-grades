@@ -96,28 +96,38 @@ function teacherEnter() {
   const username = document.getElementById("loginUsername").value.trim().toLowerCase();
   const password = document.getElementById("loginPassword").value;
 
-  db.ref("teachers/" + username).once("value").then(snapshot => {
-    if (!snapshot.exists()) {
-      alert("User not found");
-      return;
-    }
+  if (username === "" || password === "") {
+    alert("Enter username and password");
+    return;
+  }
 
-    const teacher = snapshot.val();
+  db.ref("teachers/" + username).once("value")
+    .then(snapshot => {
+      if (!snapshot.exists()) {
+        alert("User not found");
+        return;
+      }
 
-    if (teacher.password !== password) {
-      alert("Wrong password");
-      return;
-    }
+      const teacher = snapshot.val();
 
-    currentTeacher = username;
-    localStorage.setItem("currentTeacher", currentTeacher);
+      if (teacher.password !== password) {
+        alert("Wrong password");
+        return;
+      }
 
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("app").style.display = "flex";
+      currentTeacher = username;
+      localStorage.setItem("currentTeacher", currentTeacher);
 
-    setRole("teacher");
-    loadTeacherTable();
-  });
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+
+      setRole("teacher");
+      loadTeacherTable();
+    })
+    .catch(error => {
+      alert("Firebase error: " + error.message);
+      console.error(error);
+    });
 }
 
 function studentEnter() {
