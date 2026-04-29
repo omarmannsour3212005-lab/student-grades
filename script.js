@@ -24,8 +24,8 @@ const subjectTranslations = {
     technology: "Technology", programming: "Programming",
     economics: "Economics", psychology: "Psychology",
     report: "Student Report", subject: "Subject", grade: "Grade",
-    name: "Name", total: "Total", average: "Average", result: "Result",
-    status: "Status", dashboard: "Teacher Dashboard"
+    name: "Name", total: "Total", average: "Average",
+    result: "Result", status: "Status", dashboard: "Teacher Dashboard"
   },
 
   ar: {
@@ -36,8 +36,8 @@ const subjectTranslations = {
     technology: "التكنولوجيا", programming: "البرمجة",
     economics: "الاقتصاد", psychology: "علم النفس",
     report: "تقرير الطالب", subject: "المادة", grade: "العلامة",
-    name: "الاسم", total: "المجموع", average: "المعدل", result: "النتيجة",
-    status: "الحالة", dashboard: "لوحة المعلم"
+    name: "الاسم", total: "المجموع", average: "المعدل",
+    result: "النتيجة", status: "الحالة", dashboard: "لوحة المعلم"
   },
 
   he: {
@@ -48,14 +48,50 @@ const subjectTranslations = {
     technology: "טכנולוגיה", programming: "תכנות",
     economics: "כלכלה", psychology: "פסיכולוגיה",
     report: "דוח תלמיד", subject: "מקצוע", grade: "ציון",
-    name: "שם", total: "סך הכל", average: "ממוצע", result: "תוצאה",
-    status: "סטטוס", dashboard: "לוח מורה"
+    name: "שם", total: "סך הכל", average: "ממוצע",
+    result: "תוצאה", status: "סטטוס", dashboard: "לוח מורה"
   }
 };
 
 function getT() {
   const lang = document.getElementById("language")?.value || "en";
   return subjectTranslations[lang];
+}
+
+function translateSubject(subject) {
+  const lang = document.getElementById("language")?.value || "en";
+  const key = subject.toLowerCase();
+  return subjectTranslations[lang][key] || subject;
+}
+
+function translateStatus(status) {
+  const lang = document.getElementById("language")?.value || "en";
+
+  const map = {
+    en: {
+      "Excellent ⭐": "⭐ Excellent",
+      "Very Good ✅": "✅ Very Good",
+      "Good ✅": "✅ Good",
+      "Passed ✅": "✅ Passed",
+      "Failed ❌": "❌ Failed"
+    },
+    ar: {
+      "Excellent ⭐": "⭐ ممتاز",
+      "Very Good ✅": "✅ جيد جداً",
+      "Good ✅": "✅ جيد",
+      "Passed ✅": "✅ ناجح",
+      "Failed ❌": "❌ راسب"
+    },
+    he: {
+      "Excellent ⭐": "⭐ מצוין",
+      "Very Good ✅": "✅ טוב מאוד",
+      "Good ✅": "✅ טוב",
+      "Passed ✅": "✅ עבר",
+      "Failed ❌": "❌ נכשל"
+    }
+  };
+
+  return map[lang][status] || status;
 }
 
 function showStudentLogin() {
@@ -180,13 +216,12 @@ function setRole(role) {
 
 function changeLanguage() {
   const lang = document.getElementById("language").value;
+  const t = subjectTranslations[lang];
 
   document.querySelectorAll("[data-key]").forEach(el => {
     const key = el.getAttribute("data-key");
-    el.innerText = subjectTranslations[lang][key];
+    el.innerText = t[key];
   });
-
-  const t = subjectTranslations[lang];
 
   if (lang === "ar") {
     document.getElementById("title").innerText = "نظام OM للعلامات";
@@ -241,7 +276,7 @@ function showInputs() {
         type="number" 
         class="grade" 
         data-subject="${subject.value}" 
-        placeholder="${subject.value} grade"
+        placeholder="${translateSubject(subject.value)} grade"
         min="0"
         max="100"
       >
@@ -355,7 +390,7 @@ function showReport(student) {
   student.subjects.forEach(item => {
     rows += `
       <tr>
-        <td>${item.subject}</td>
+        <td>${translateSubject(item.subject)}</td>
         <td>${item.grade}</td>
       </tr>
     `;
@@ -379,7 +414,7 @@ function showReport(student) {
 
       <p><b>${t.total}:</b> ${student.total}</p>
       <p><b>${t.average}:</b> ${student.average}</p>
-      <p><b>${t.result}:</b> <span class="${student.statusClass}">${student.status}</span></p>
+      <p><b>${t.result}:</b> <span class="${student.statusClass}">${translateStatus(student.status)}</span></p>
     </div>
   `;
 
@@ -402,18 +437,20 @@ function loadTeacherTable() {
     let html = `
       <table>
         <tr>
-          <th>${t.name}</th>
-          <th>${t.average}</th>
           <th>${t.status}</th>
+          <th>${t.average}</th>
+          <th>${t.name}</th>
         </tr>
     `;
 
     for (let key in students) {
       html += `
         <tr>
-          <td>${students[key].name}</td>
+          <td class="${students[key].statusClass}">
+            ${translateStatus(students[key].status)}
+          </td>
           <td>${students[key].average}</td>
-          <td class="${students[key].statusClass}">${students[key].status}</td>
+          <td>${students[key].name}</td>
         </tr>
       `;
     }
@@ -433,9 +470,9 @@ function drawChart(student) {
   chart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: student.subjects.map(s => s.subject),
+      labels: student.subjects.map(s => translateSubject(s.subject)),
       datasets: [{
-        label: "Grades",
+        label: getT().grade,
         data: student.subjects.map(s => s.grade)
       }]
     }
