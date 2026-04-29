@@ -440,3 +440,21 @@ function toggleDarkMode() {
 }
 
 showStudentLogin();
+
+function showAlert(message, type = "info") {
+  const overlay = document.getElementById("customAlert");
+  const title = document.getElementById("alertTitle");
+  const text = document.getElementById("alertMessage");
+
+  text.innerText = message;
+
+  if (type === "success") title.innerText = "Success ✅";
+  else if (type === "error") title.innerText = "Error ❌";
+  else title.innerText = "Notice ℹ️";
+
+  overlay.classList.add("show");
+}
+
+function closeAlert() {
+  document.getElementById("customAlert").classList.remove("show");
+}
