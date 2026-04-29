@@ -70,20 +70,26 @@ function signUpTeacher() {
     return;
   }
 
-  db.ref("teachers/" + username).once("value").then(snapshot => {
-    if (snapshot.exists()) {
-      alert("Username already exists");
-      return;
-    }
+  db.ref("teachers/" + username).once("value")
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        alert("Username already exists");
+        return;
+      }
 
-    db.ref("teachers/" + username).set({
-      password: password,
-      students: {}
-    }).then(() => {
-      alert("Account created successfully");
+      return db.ref("teachers/" + username).set({
+        password: password,
+        students: {}
+      });
+    })
+    .then(() => {
+      alert("Account created successfully ✅");
       showTeacherLogin();
+    })
+    .catch(error => {
+      alert("Firebase error: " + error.message);
+      console.error(error);
     });
-  });
 }
 
 function teacherEnter() {
