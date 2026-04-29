@@ -1,4 +1,3 @@
-alert("JS WORKING");
 const firebaseConfig = {
   apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
   authDomain: "om-grade-system.firebaseapp.com",
