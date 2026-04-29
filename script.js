@@ -66,14 +66,14 @@ function signUpTeacher() {
   const password = document.getElementById("newTeacherPassword").value.trim();
 
   if (username === "" || password === "") {
-    alert("Enter username and password");
+showAlert("Enter username and password", "error");
     return;
   }
 
   db.ref("teachers/" + username).once("value")
     .then(snapshot => {
       if (snapshot.exists()) {
-        alert("Username already exists");
+       showAlert("Username already exists", "error");
         return;
       }
 
@@ -97,14 +97,14 @@ function teacherEnter() {
   const password = document.getElementById("loginPassword").value;
 
   if (username === "" || password === "") {
-    alert("Enter username and password");
+showAlert("Enter username and password", "error");
     return;
   }
 
   db.ref("teachers/" + username).once("value")
     .then(snapshot => {
       if (!snapshot.exists()) {
-        alert("User not found");
+       showAlert("User not found", "error");
         return;
       }
 
@@ -125,7 +125,7 @@ function teacherEnter() {
       loadTeacherTable();
     })
     .catch(error => {
-      alert("Firebase error: " + error.message);
+     showAlert("Firebase error: " + error.message, "error");
       console.error(error);
     });
 }
@@ -134,7 +134,7 @@ function studentEnter() {
   const name = document.getElementById("studentLoginName").value.trim();
 
   if (name === "") {
-    alert("Write your name");
+   showAlert("Write your name", 
     return;
   }
 
@@ -213,7 +213,7 @@ function showInputs() {
   gradeInputs.innerHTML = "";
 
   if (selected.length === 0) {
-    alert("Choose at least one subject");
+    showAlert("Choose at least one subject", "error");
     return;
   }
 
@@ -240,17 +240,17 @@ function calculate() {
   const grades = document.querySelectorAll(".grade");
 
   if (!currentTeacher) {
-    alert("Teacher must login first");
+    showAlert("Teacher must login first", "error");
     return;
   }
 
   if (name === "") {
-    alert("Write student name first");
+    showAlert("Write student name first", "error");
     return;
   }
 
   if (grades.length === 0) {
-    alert("Choose subjects first");
+   showAlert("Choose subjects first", "error");
     return;
   }
 
@@ -262,7 +262,7 @@ function calculate() {
     const grade = Number(input.value);
 
     if (input.value === "" || grade < 0 || grade > 100) {
-      alert("Each grade must be between 0 and 100");
+showAlert("Each grade must be between 0 and 100", "error");
       return;
     }
 
@@ -287,7 +287,7 @@ function calculate() {
   showReport(studentData);
   loadTeacherTable();
 
-  alert("Student result saved online");
+  showAlert("Student result saved online", "success");
 }
 
 function getGradeLevel(avg) {
@@ -309,7 +309,7 @@ function searchStudent() {
   const name = document.getElementById("name").value.trim().toLowerCase();
 
   if (name === "") {
-    alert("Write student name first");
+showAlert("Write student name first", "error");
     return;
   }
 
@@ -426,7 +426,7 @@ function downloadPDF() {
   const content = document.getElementById("pdfContent");
 
   if (!content) {
-    alert("No report to download");
+     showAlert("No report to download", "error");
     return;
   }
 
