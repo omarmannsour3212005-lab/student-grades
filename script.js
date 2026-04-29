@@ -134,7 +134,7 @@ function studentEnter() {
   const name = document.getElementById("studentLoginName").value.trim();
 
   if (name === "") {
-   showAlert("Write your name", 
+   showAlert("Write your name",, "error"); 
     return;
   }
 
