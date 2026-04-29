@@ -387,4 +387,47 @@ footer {
   height: 50px;
   object-fit: contain;
 }
+.navbar {
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: white;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 28px;
+  color: white;
+  line-height: 1.1;
+}
+
+.brand h1::first-letter {
+  color: #ffd700;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: white;
+  opacity: 0.85;
+}
+
+.brand a {
+  display: flex;
+  align-items: center;
+}
 
