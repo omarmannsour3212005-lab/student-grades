@@ -1,4 +1,4 @@
-alert("we are in JS file");
+
 const firebaseConfig = {
   apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
   authDomain: "om-grade-system.firebaseapp.com",
