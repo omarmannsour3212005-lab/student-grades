@@ -365,3 +365,14 @@ footer {
   display: flex;
   flex-direction: column;
 }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
