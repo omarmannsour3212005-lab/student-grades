@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyBcX3RdUwQypWjLMAC4pQVT7VLUE6Pb_Ys",
   authDomain: "om-grade-system.firebaseapp.com",
@@ -66,14 +65,14 @@ function signUpTeacher() {
   const password = document.getElementById("newTeacherPassword").value.trim();
 
   if (username === "" || password === "") {
-showAlert("Enter username and password", "error");
+    showAlert("Enter username and password", "error");
     return;
   }
 
   db.ref("teachers/" + username).once("value")
     .then(snapshot => {
       if (snapshot.exists()) {
-       showAlert("Username already exists", "error");
+        showAlert("Username already exists", "error");
         return;
       }
 
@@ -83,11 +82,11 @@ showAlert("Enter username and password", "error");
       });
     })
     .then(() => {
-      showAlert("Account created successfully ✅", "success");
+      showAlert("Account created successfully ", "success");
       showTeacherLogin();
     })
     .catch(error => {
-      showAlert("Firebase error: " + error.message, "error");;
+     showAlert("Firebase error: " + error.message, "error");
       console.error(error);
     });
 }
@@ -97,7 +96,7 @@ function teacherEnter() {
   const password = document.getElementById("loginPassword").value;
 
   if (username === "" || password === "") {
-showAlert("Enter username and password", "error");
+    showAlert("Enter username and password", "error");
     return;
   }
 
@@ -111,7 +110,7 @@ showAlert("Enter username and password", "error");
       const teacher = snapshot.val();
 
       if (teacher.password !== password) {
-        showAlert("Wrong password", "error")
+        showAlert("Wrong password", "error");
         return;
       }
 
@@ -125,16 +124,15 @@ showAlert("Enter username and password", "error");
       loadTeacherTable();
     })
     .catch(error => {
-     showAlert("Firebase error: " + error.message, "error");
+      showAlert("Firebase error: " + error.message, "error");
       console.error(error);
     });
 }
-
 function studentEnter() {
   const name = document.getElementById("studentLoginName").value.trim();
 
   if (name === "") {
-   showAlert("Write your name",, "error"); 
+   showAlert("Write your name", "error");
     return;
   }
 
@@ -250,7 +248,7 @@ function calculate() {
   }
 
   if (grades.length === 0) {
-   showAlert("Choose subjects first", "error");
+    showAlert("Choose subjects first", "error");
     return;
   }
 
@@ -262,7 +260,7 @@ function calculate() {
     const grade = Number(input.value);
 
     if (input.value === "" || grade < 0 || grade > 100) {
-showAlert("Each grade must be between 0 and 100", "error");
+      showAlert("Each grade must be between 0 and 100", "error");
       return;
     }
 
@@ -309,7 +307,7 @@ function searchStudent() {
   const name = document.getElementById("name").value.trim().toLowerCase();
 
   if (name === "") {
-showAlert("Write student name first", "error");
+    showAlert("Write student name first", "error");
     return;
   }
 
@@ -426,7 +424,7 @@ function downloadPDF() {
   const content = document.getElementById("pdfContent");
 
   if (!content) {
-     showAlert("No report to download", "error");
+    showAlert("No report to download", "error");
     return;
   }
 
