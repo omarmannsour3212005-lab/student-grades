@@ -111,7 +111,7 @@ function teacherEnter() {
       const teacher = snapshot.val();
 
       if (teacher.password !== password) {
-        alert("Wrong password");
+        showAlert("Wrong password", "error")
         return;
       }
 
