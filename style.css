@@ -349,3 +349,9 @@ footer {
   color: white;
   cursor: pointer;
 }
+.logo {
+  width: 120px;
+  display: block;
+  margin: 10px auto;
+  cursor: pointer;
+}
