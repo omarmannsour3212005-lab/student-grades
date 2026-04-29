@@ -9,15 +9,15 @@
 
 <body>
 
- <a href="index.html">
-  <img src="./logo-1.png" class="logo">
-</a>
 <nav class="navbar">
-  <div class="brand-logo">
-    <div class="logo-icon">OM</div>
+  <div class="brand">
+    <a href="index.html">
+      <img src="./logo-1.png" class="logo" alt="OM Grade System Logo">
+    </a>
+
     <div>
-      <span class="logo-text"><b class="om">OM</b> Grade System</span>
-      <span class="logo-sub">Student Calculator</span>
+      <h1>OM Grade System</h1>
+      <p>Student Calculator</p>
     </div>
   </div>
 
@@ -125,23 +125,20 @@
   Created by <b>OMAR MANSOUR</b>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  
-<script src="script.js"></script>
-
-  <div id="customAlert" class="alert-overlay">
+<div id="customAlert" class="alert-overlay">
   <div class="alert-box">
+    <div id="alertIcon" class="alert-icon">ℹ️</div>
     <h3 id="alertTitle"></h3>
     <p id="alertMessage"></p>
     <button onclick="closeAlert()">OK</button>
   </div>
 </div>
 
- 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
