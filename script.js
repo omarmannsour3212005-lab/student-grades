@@ -26,7 +26,8 @@ const subjectTranslations = {
     report: "Student Report", subject: "Subject", grade: "Grade",
     name: "Name", total: "Total", average: "Average",
     result: "Result", status: "Status", dashboard: "Teacher Dashboard",
-    saveResult: "Save Student Result", gradeWord: "grade"
+    saveResult: "Save Student Result", gradeWord: "grade",
+    aiChat: "Talk to AI", aiChatTitle: "AI Chat"
   },
 
   ar: {
@@ -39,7 +40,8 @@ const subjectTranslations = {
     report: "تقرير الطالب", subject: "المادة", grade: "العلامة",
     name: "الاسم", total: "المجموع", average: "المعدل",
     result: "النتيجة", status: "الحالة", dashboard: "لوحة المعلم",
-    saveResult: "حفظ نتيجة الطالب", gradeWord: "العلامة"
+    saveResult: "حفظ نتيجة الطالب", gradeWord: "العلامة",
+    aiChat: "تحدث مع الذكاء الاصطناعي", aiChatTitle: "دردشة الذكاء الاصطناعي"
   },
 
   he: {
@@ -52,7 +54,8 @@ const subjectTranslations = {
     report: "דוח תלמיד", subject: "מקצוע", grade: "ציון",
     name: "שם", total: "סך הכל", average: "ממוצע",
     result: "תוצאה", status: "סטטוס", dashboard: "לוח מורה",
-    saveResult: "שמור תוצאת תלמיד", gradeWord: "ציון"
+    saveResult: "שמור תוצאת תלמיד", gradeWord: "ציון",
+    aiChat: "דבר עם AI", aiChatTitle: "צ'אט AI"
   }
 };
 
@@ -258,6 +261,22 @@ function changeLanguage() {
   document.getElementById("dashboardTitle").innerText = t.dashboard;
   document.body.dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
 
+  const aiBtn = document.getElementById("aiChatBtn");
+  if (aiBtn) aiBtn.innerText = t.aiChat;
+
+  const aiTitle = document.getElementById("aiChatTitle");
+  if (aiTitle) aiTitle.innerText = t.aiChatTitle;
+
+  const chatInput = document.getElementById("chatInput");
+  if (chatInput) {
+    chatInput.placeholder = lang === "ar" ? "اسأل الذكاء الاصطناعي..." : lang === "he" ? "שאל AI..." : "Ask AI...";
+  }
+
+  const sendBtn = document.querySelector("#aiChat .chat-input button");
+  if (sendBtn) {
+    sendBtn.innerText = lang === "ar" ? "إرسال" : lang === "he" ? "שלח" : "Send";
+  }
+
   if (lastStudentData) showReport(lastStudentData);
   loadTeacherTable();
 }
@@ -420,10 +439,13 @@ function showReport(student) {
       <p><b>${t.average}:</b> ${student.average}</p>
       <p><b>${t.result}:</b> <span class="${student.statusClass}">${translateStatus(student.status)}</span></p>
     </div>
+
+    <button id="aiChatBtn" onclick="openAIChat()">Talk to AI</button>
   `;
 
   drawChart(student);
   document.getElementById("pdfBtn").style.display = "block";
+  document.getElementById("aiChat").style.display = "none";
 }
 
 function loadTeacherTable() {
@@ -526,5 +548,57 @@ function closeAlert() {
   document.getElementById("customAlert").classList.remove("show");
 }
 
+function openAIChat() {
+  const chat = document.getElementById("aiChat");
+  chat.style.display = chat.style.display === "none" ? "block" : "none";
+  if (chat.style.display === "block") {
+    document.getElementById("chatMessages").innerHTML = "<p><b>AI:</b> Hello! How can I help you with your grades?</p>";
+  }
+}
+
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const msg = input.value.trim();
+  if (msg === "") return;
+
+  addMessage("You", msg);
+  input.value = "";
+
+  const response = getAIResponse(msg, lastStudentData);
+  setTimeout(() => addMessage("AI", response), 500); // Simulate delay
+}
+
+function addMessage(sender, text) {
+  const chat = document.getElementById("chatMessages");
+  chat.innerHTML += `<p><b>${sender}:</b> ${text}</p>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function getAIResponse(msg, student) {
+  const lowerMsg = msg.toLowerCase();
+  const avg = parseFloat(student.average);
+
+  if (lowerMsg.includes("help") || lowerMsg.includes("مساعدة")) {
+    if (student.status.includes("Failed") || avg < 50) {
+      return "I'm sorry you didn't pass. Focus on studying more, ask your teacher for help, and practice regularly. You can do it!";
+    } else if (avg >= 90) {
+      return "Excellent work! Keep up the great effort. Maybe try challenging yourself with advanced topics.";
+    } else {
+      return "Good job! To improve, review the subjects you scored lower in and practice more exercises.";
+    }
+  } else if (lowerMsg.includes("grade") || lowerMsg.includes("علامة")) {
+    return `Your average grade is ${student.average}. ${student.status}`;
+  } else if (lowerMsg.includes("subject") || lowerMsg.includes("مادة")) {
+    let lowSubjects = student.subjects.filter(s => s.grade < 70).map(s => translateSubject(s.subject));
+    if (lowSubjects.length > 0) {
+      return `You might need to improve in: ${lowSubjects.join(", ")}.`;
+    } else {
+      return "You're doing well in all subjects!";
+    }
+  } else {
+    return "That's interesting. Ask me about your grades, help, or specific subjects!";
+  }
+}
+
 showStudentLogin();
-changeLanguage();
+changeLanguage(); 
